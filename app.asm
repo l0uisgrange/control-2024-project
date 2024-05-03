@@ -12,13 +12,11 @@
 ; reset before start
 reset:
         ;       --------------      ; configure PORTA as I/O
-        ldi     r31, 0b00001111     ; set output bits 0-3
-        out     DDRA, r31
-        ldi     r31, 0b00001111     ; set bits 0-3 toCCC
-        out     PORTA, r31
+        OUTI    DDRA, 0b00001111
+        OUTI    PORTA, 0b00001111     ; set bits 0-3 toCCC
         ;       --------------      ; START LCD resest
         LDSP    RAMEND              ; set up stack pointer
-        OUTI    DDRB, 0xff          ; configure portB to output
+        OUTI    DDRB, 0b11111111          ; configure portB to output
         rcall   LCD_init            ; initialize LCD
         rcall   LCD_blink_on        ; turn blinking on
         ;       --------------      ; start process

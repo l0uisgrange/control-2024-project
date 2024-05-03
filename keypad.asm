@@ -1,7 +1,10 @@
 ; file  keypad.asm target ATmega128L
 ; purpose main file
 
-keypad:
+; constants
+.equ	KPD_DELAY = 30
+
+int_keypad:
         in      r31, PINF
 
-        ret
+        reti

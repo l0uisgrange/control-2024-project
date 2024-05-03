@@ -5,6 +5,5 @@
 .equ	KPD_DELAY = 30
 
 int_keypad:
-        in      r31, PINF
-
+        in      r31, PINA
         reti

@@ -11,26 +11,32 @@
 
 ; reset before start
 reset:
-        ;       --------------      ; configure PORTA as I/O
-        OUTI    DDRA, 0b00001111
-        OUTI    PORTA, 0b00001111     ; set bits 0-3 toCCC
-        ;       --------------      ; START LCD reset
-        LDSP    RAMEND              ; set up stack pointer
-        OUTI    DDRB, 0b11111111          ; configure portB to output
-        rcall   LCD_init            ; initialize LCD
-        rcall   LCD_blink_on        ; turn blinking on
-        ;       --------------      ; start process
+        ;       --------------          ; configure PORTA as I/O
+        OUTI    DDRA, KPD_COL
+        OUTI    PORTA, KPD_COL          ; set bits 0-3 to 
+        ;       --------------          ; START LCD reset
+        LDSP    RAMEND                  ; set up stack pointer
+        OUTI    DDRB, 0b11111111        ; configure portB to output
+        rcall   LCD_init                ; initialize LCD
+        rcall   LCD_blink_on            ; turn blinking on
+        ;       --------------          ; start process
         jmp     intro
 
 .include "lcd.asm"
 .include "keypad.asm"
 
 intro:
-        ldi     a0, 'A'             ; write character 'A'
+        ldi     a0, 'E'                 ; write character 'A'
         rcall   lcd_putc
-        ldi     a0, 'V'             ; write character 'V'
+        ldi     a0, 'n'                 ; write character 'V'
         rcall   lcd_putc
-        ldi     a0, 'R'             ; write character 'R'
+        ldi     a0, 't'                 ; write character 'R'
+        rcall   lcd_putc
+        ldi     a0, 'e'                 ; write character 'A'
+        rcall   lcd_putc
+        ldi     a0, 'r'                 ; write character 'V'
+        rcall   lcd_putc
+        ldi     a0, ':'                 ; write character 'R'
         rcall   lcd_putc
 
 ; main process
@@ -44,4 +50,3 @@ main:
         CP0     PIND, 5, LCD_cursor_left
         JP0     PIND, 6, intro
         rjmp    main
-        

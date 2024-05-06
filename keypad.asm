@@ -12,7 +12,7 @@ int_kpd:
         OUTI    DDRD, KPD_ROW
         OUTI    PORTD, KPD_ROW
         in      b1, PIND
-        LCD_clear
+        rcall   LCD_clear
         ldi     a0, 'I'
         rcall   lcd_putc
         ldi     a0, 'N'

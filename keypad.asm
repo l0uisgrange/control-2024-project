@@ -21,3 +21,17 @@ isr_ext_int0:
 	_LDI	mask, 0b00000001
 	reti
 	; no reti (grouped in isr_return)
+
+int_kpd:
+        in      b0, PIND
+        OUTI    DDRD, KPD_ROW
+        OUTI    PORTD, KPD_ROW
+        in      b1, PIND
+        rcall   LCD_clear
+        ldi     a0, 'I'
+        rcall   lcd_putc
+        ldi     a0, 'N'
+        rcall   lcd_putc
+        ldi     a0, 'T'
+        rcall   lcd_putc
+        reti

@@ -124,7 +124,8 @@ main:
 	add		a0, wr1
 	add		a0, wr0
 
-	; TO BE COMPLETED AT THIS LOCATION		; decoding ascii
+	mov    ZL, a0          ; Load Z with the address (wr1 + wr0) of KeySet01
+    lpm    a, Z            ; Load the ASCII character from the address pointed by Z to a		; decoding ascii
 	
 	
 PRINTF LCD
@@ -134,4 +135,7 @@ PRINTF LCD
 	
 ; code conversion table, character set #1 key to ASCII	
 KeySet01:
-.db ; TO BE COMPLETED AT THIS LOCATION
+.db '1', '2', '3', 'A'
+.db '4', '5', '6', 'B'
+.db '7', '8', '9', 'C'
+.db '*', '0', '#', 'D'

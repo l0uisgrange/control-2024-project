@@ -14,7 +14,7 @@ reset:
         ;       --------------          ; Activate interruptions
         LDSP    RAMEND                  ; load SP
         OUTI    EIMSK, 0b00000001       ; enable int0 (int_kpd)
-        OUTI    EICRA, ((1<<ISC01) | (1<<ISC00))
+        STSI    EICRA, (1<<ISC01 | 1<<ISC00)
         sei                             ; set global interrupt
         ;       --------------          ; configure PORTA as I/O
         OUTI    DDRD, KPD_COL

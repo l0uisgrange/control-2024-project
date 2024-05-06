@@ -7,6 +7,13 @@
 ; 	pointers
 ; ==============
 
+
+; --- setting EICRA
+.macro	STSI
+	ldi w, @1
+	sts	@0, w
+	.endmacro
+
 ; --- loading an immediate into a pointer XYZ,SP ---
 .macro 	LDIX	; sram
 	ldi	xl, low(@0)

@@ -1,24 +1,29 @@
-; file  app.asm target ATmega128L
-; purpose main file
+; file          app.asm target ATmega128L
+; purpose       main file
 
-.include "lcd.asm"
-.include "keypad.asm"
+.include "macros.asm"
+.include "definitions.asm"
 
 ; interrupt vector table
-
+.out    0
+        jmp     reset
+        jmp     int_keypad
 
 ; reset before start
 reset:
         ;       --------------      ; configure PORTA as I/O
         OUTI    DDRA, 0b00001111
         OUTI    PORTA, 0b00001111     ; set bits 0-3 toCCC
-        ;       --------------      ; START LCD resest
+        ;       --------------      ; START LCD reset
         LDSP    RAMEND              ; set up stack pointer
         OUTI    DDRB, 0b11111111          ; configure portB to output
         rcall   LCD_init            ; initialize LCD
         rcall   LCD_blink_on        ; turn blinking on
         ;       --------------      ; start process
         jmp     intro
+
+.include "lcd.asm"
+.include "keypad.asm"
 
 intro:
         ldi     a0, 'A'             ; write character 'A'

@@ -7,13 +7,17 @@
 ; interrupt vector table
 .org    0
         jmp     reset
-        jmp     int_keypad
+        jmp     int_kpd
 
 ; reset before start
 reset:
+        ;       --------------          ; Activate interruptions
+        LDSP    RAMEND                  ; load SP
+        OUTI    EIMSK, 0b00000001       ; enable int0 (int_kpd)
+        sei                             ; set global interrupt
         ;       --------------          ; configure PORTA as I/O
-        OUTI    DDRA, KPD_COL
-        OUTI    PORTA, KPD_COL          ; set bits 0-3 to 
+        OUTI    DDRD, KPD_COL
+        OUTI    PORTD, KPD_COL          ; set bits 0-3 to 
         ;       --------------          ; START LCD reset
         LDSP    RAMEND                  ; set up stack pointer
         OUTI    DDRB, 0b11111111        ; configure portB to output
@@ -41,12 +45,4 @@ intro:
 
 ; main process
 main:
-        WAIT_MS 100
-        CP0     PIND, 0, LCD_home
-        CP0     PIND, 1, LCD_clear
-        CP0     PIND, 2, LCD_display_right
-        CP0     PIND, 3, LCD_display_left
-        CP0     PIND, 4, LCD_cursor_right
-        CP0     PIND, 5, LCD_cursor_left
-        JP0     PIND, 6, intro
-        rjmp    main
+        

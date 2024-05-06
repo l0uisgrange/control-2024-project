@@ -7,6 +7,16 @@
 .equ    KPD_ROW = 0b11110000
 
 
-int_keypad:
-        in      r31, PINA
+int_kpd:
+        in      b0, PIND
+        OUTI    DDRD, KPD_ROW
+        OUTI    PORTD, KPD_ROW
+        in      b1, PIND
+        LCD_clear
+        ldi     a0, 'I'
+        rcall   lcd_putc
+        ldi     a0, 'N'
+        rcall   lcd_putc
+        ldi     a0, 'T'
+        rcall   lcd_putc
         reti

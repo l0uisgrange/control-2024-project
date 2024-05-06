@@ -20,7 +20,6 @@ reset:
         OUTI    PORTD, KPD_COL          ; set bits 0-3 to 
         ;       --------------          ; START LCD reset
         LDSP    RAMEND                  ; set up stack pointer
-        OUTI    DDRB, 0b11111111        ; configure portB to output
         rcall   LCD_init                ; initialize LCD
         rcall   LCD_blink_on            ; turn blinking on
         ;       --------------          ; start process

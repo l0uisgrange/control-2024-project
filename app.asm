@@ -45,4 +45,6 @@ intro:
 
 ; main process
 main:
+        WAIT_MS 100
+        rjmp    main
         

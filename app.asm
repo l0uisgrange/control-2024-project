@@ -39,3 +39,4 @@ main:
         CP0     PIND, 5, LCD_cursor_left
         JP0     PIND, 6, intro
         rjmp    main
+        

@@ -5,9 +5,7 @@
 .include "keypad.asm"
 
 ; interrupt vector table
-.org 0
-        jmp     reset
-        jmp     int_keypad
+
 
 ; reset before start
 reset:

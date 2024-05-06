@@ -18,7 +18,7 @@ reset:
         STSI    EICRA, ((1<<ISC01) | (1<<ISC00))
         sei                             ; set global interrupt
         ;       --------------          ; configure PORTA as I/O
-        OUTI    DDRD, KPD_COL
+        OUTI    DDRD, 1
         OUTI    PORTD, KPD_COL          ; set bits 0-3 to 
         ;       --------------          ; START LCD reset
         rcall   LCD_init                ; initialize LCD

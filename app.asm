@@ -14,12 +14,12 @@ reset:
         ;       --------------          ; Activate interruptions
         LDSP    RAMEND                  ; load SP
         OUTI    EIMSK, 0b00000001       ; enable int0 (int_kpd)
+        OUTI    EICRA, ((1<<ISC01) | (1<<ISC00))
         sei                             ; set global interrupt
         ;       --------------          ; configure PORTA as I/O
         OUTI    DDRD, KPD_COL
         OUTI    PORTD, KPD_COL          ; set bits 0-3 to 
         ;       --------------          ; START LCD reset
-        LDSP    RAMEND                  ; set up stack pointer
         rcall   LCD_init                ; initialize LCD
         rcall   LCD_blink_on            ; turn blinking on
         ;       --------------          ; start process

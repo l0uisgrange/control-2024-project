@@ -17,4 +17,17 @@ int_kpd:
         rcall   lcd_putc
         ldi     a0, 'T'
         rcall   lcd_putc
+        WAIT_MS 2000
+        ldi     a0, 'E'                 ; write character 'A'
+        rcall   lcd_putc
+        ldi     a0, 'n'                 ; write character 'V'
+        rcall   lcd_putc
+        ldi     a0, 't'                 ; write character 'R'
+        rcall   lcd_putc
+        ldi     a0, 'e'                 ; write character 'A'
+        rcall   lcd_putc
+        ldi     a0, 'r'                 ; write character 'V'
+        rcall   lcd_putc
+        ldi     a0, ':'                 ; write character 'R'
+        rcall   lcd_putc
         reti

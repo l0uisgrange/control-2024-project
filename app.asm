@@ -13,13 +13,11 @@
 ; reset before start
 reset:
         ;       --------------          ; Activate interruptions
-        LDSP    RAMEND                  ; load SP
-        OUTI    EIMSK, 0b00000001       ; enable int0 (int_kpd)
-        STSI    EICRA, (1<<ISC01 | 1<<ISC00)
-        sei                             ; set global interrupt
-        ;       --------------          ; configure PORTA as I/O
-        OUTI    DDRD, KPD_COL
-        OUTI    PORTD, KPD_COL          ; set bits 0-3 to 
+        OUTI	KPDD,0xf0		; bit0-3 pull-up and bits4-7 driven low
+	OUTI	KPDO,0x0f		;>(needs the two lines)
+	OUTI	DDRB,0xff		; turn on LEDs
+	OUTI	EIMSK,0x0f		; enable INT0-INT3
+	OUTI	EICRB,0b0		;>at low level
         ;       --------------          ; START LCD reset
         rcall   LCD_init                ; initialize LCD
         rcall   LCD_blink_on            ; turn blinking on

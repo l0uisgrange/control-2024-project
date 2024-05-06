@@ -7,7 +7,8 @@
 ; interrupt vector table
 .org    0
         jmp     reset
-        jmp     int_kpd
+        jmp	isr_ext_int0	; external interrupt INT0
+
 
 ; reset before start
 reset:

@@ -16,7 +16,6 @@
 	jmp	int0	            ; external interrupt INT0
 	jmp	int1	            ; external interrupt INT1
 
-; TODO TO BE COMPLETED AT THIS LOCATION
 
 ; ————————— interrupt service routines ————————
 int0:
@@ -26,18 +25,17 @@ int0:
 	; no reti (grouped in isr_return)
 
 int1:
-    _LDI    wr0, 0x00
-    _LDI    mask, 0b00000001
-    rjmp    row_detect
-    ; no reti (grouped in isr_return)
+        _LDI    wr0, 0x00
+        _LDI    mask, 0b00000001
+        rjmp    row_detect
+        ; no reti (grouped in isr_return)
     
-; TODO TO BE COMPLETED AT THIS LOCATION
 
 column_detect:
 	OUTI	PORTD, 0xff	    ; bit4-7 driven high
 
 row_detect:
-    OUTI    PORTD, 0x00      ; bit4-7 driven low
+        OUTI    PORTD, 0x00      ; bit4-7 driven low
 
 col7:
 	WAIT_MS	KPD_DELAY
@@ -53,12 +51,12 @@ col7:
 col6:
 ; TODO TO BE COMPLETED AT THIS LOCATION
 	
-err_row0:			        ; debug purpose and filter residual glitches
+err_row0:			        
 	rjmp	int_return
 	; no reti (grouped in isr_return)
 
 int_return:
-	INVP	PORTB,0		    ; visual feedback of key pressed acknowledge
+        INVP	PORTB,0		                        ; visual feedback of key pressed acknowledge
 	ldi		_w,10		    ; sound feedback of key pressed acknowledge
 
 beep01:

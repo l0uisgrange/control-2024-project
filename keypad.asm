@@ -4,9 +4,6 @@
 .include "definitions.asm"
 
 ; ——————————————— definitions ————————————————
-.equ	KPDD = DDRD
-.equ	KPDO = PORTD
-.equ	KPDI = PIND
 .equ	KPD_DELAY = 30      ; keypad bouncing delay
 .def	wr0 = r2		    ; detected row in hex
 .def	wr1 = r1		    ; detected column in hex
@@ -19,7 +16,6 @@
 	jmp	int0	            ; external interrupt INT0
 	jmp	int1	            ; external interrupt INT1
 
-
 ; TODO TO BE COMPLETED AT THIS LOCATION
 
 ; ————————— interrupt service routines ————————
@@ -27,19 +23,27 @@ int0:
 	_LDI	wr1, 0x00		; detect row 1
 	_LDI	mask, 0b00000001
 	rjmp	column_detect
+	; no reti (grouped in isr_return)
 
 int1:
-
+    _LDI    wr0, 0x00
+    _LDI    mask, 0b00000001
+    rjmp    row_detect
+    ; no reti (grouped in isr_return)
+    
 ; TODO TO BE COMPLETED AT THIS LOCATION
 
 column_detect:
-	OUTI	KPDO,0xff	    ; bit4-7 driven high
+	OUTI	PORTD, 0xff	    ; bit4-7 driven high
+
+row_detect:
+    OUTI    PORTD, 0x00      ; bit4-7 driven low
 
 col7:
 	WAIT_MS	KPD_DELAY
-	OUTI	KPDO, 0x7f	    ; check column 7
+	OUTI	PORTD, 0x7f	    ; check column 7
 	WAIT_MS	KPD_DELAY
-	in		w, KPDI
+	in		w, PIND
 	and		w, mask
 	tst		w
 	brne	col6
@@ -47,11 +51,11 @@ col7:
 	rjmp	int_return
 
 col6:
-
 ; TODO TO BE COMPLETED AT THIS LOCATION
 	
 err_row0:			        ; debug purpose and filter residual glitches
 	rjmp	int_return
+	; no reti (grouped in isr_return)
 
 int_return:
 	INVP	PORTB,0		    ; visual feedback of key pressed acknowledge
@@ -71,13 +75,15 @@ beep01:
 
 reset:	LDSP	RAMEND		; Load Stack Pointer (SP)
 	rcall	LCD_init		; initialize UART
-	OUTI	KPDD, 0xf0		; bit0-3 pull-up and bits4-7 driven low
-	OUTI	KPDO, 0x0f		; output
+	OUTI	DDRD, 0xf0		; bit0-3 pull-up and bits4-7 driven low
+	OUTI	PORTD, 0x0f		; output
 	OUTI	DDRB, 0xff		; turn on LEDs
 	OUTI	EIMSK, 0x0f		; enable INT0-INT3
 	OUTI	EICRB, 0b0		;>at low level
 	sbi		DDRE, SPEAKER	; enable sound
-    PRINTF  LCD .db	CR,CR,"hello world"
+    PRINTF  LCD .db	CR,CR,"Welcome to Mastermind"
+    WAIT_MS 3000
+    PRINTF  LCD .db	CR,CR,"Number to guess:"
 	clr		wr0
 	clr		wr1
 	clr		wr2

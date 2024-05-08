@@ -38,7 +38,7 @@ row1:
 	and		w, mask
 	tst		w
 	breq	row2
-	_LDI	wr1, 0x07
+	add		wr1, w
 	rjmp	int_return
 
 row2:
@@ -104,7 +104,7 @@ main:
 	add     b0, wr1
 
 	PRINTF  LCD
-	.db CR,LF,"->", FBIN, b
+	.db CR,LF,">", FBIN, b
 	.db 0
 	rjmp	main
 	

@@ -44,7 +44,7 @@ col7:
 
 col6:
 	WAIT_MS	KPD_DELAY
-	OUTI	PORTD, 0x7f     ; check column 7
+	OUTI	PORTD, 0xbf     ; check column 7
 	WAIT_MS	KPD_DELAY
 	in	w, PIND
 	and	w, mask
@@ -52,15 +52,15 @@ col6:
 	breq	col6
 	_LDI	wr1, 0x01
 	rjmp	row_detect
+
 ; TODO TO BE COMPLETED AT THIS LOCATION
 
 err_row0:
-	OUTI    PORTE, 0x01
-	OUTI    PORTB, 0x7f
 	rjmp	int_return
 
 row_detect:
         OUTI    PORTD, 0x00
+
 row7:
 	WAIT_MS	KPD_DELAY
 	OUTI	PORTD, 0xf7     ; check column 7

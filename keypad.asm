@@ -18,12 +18,14 @@
 
 ; ————————— interrupt service routines ————————
 ext_int0:
-	_LDI	wr1, 0x00       ; detect row 1
+	_LDI	wr1, 0x00
 	_LDI	mask, 0b00000001
 	rjmp	column_detect
 
 ext_int1:
-	reti
+	_LDI	wr1, 0x00
+	_LDI	mask, 0b00000001
+	rjmp	column_detect
 
 column_detect:
 	OUTI	PORTD, 0xff     ; bit4-7 driven high
@@ -47,7 +49,7 @@ col6:
 	and	w, mask
 	tst	w
 	breq	col5
-	_LDI	wr1, 0x01
+	_LDI	wr1, 0x08
 	rjmp	row_detect
 
 col5:

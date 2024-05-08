@@ -49,7 +49,7 @@ col6:
 	and	w, mask
 	tst	w
 	breq	col5
-	_LDI	wr1, 0x08
+	_LDI	wr1, w
 	rjmp	row_detect
 
 col5:
@@ -166,7 +166,7 @@ main:
 	add     b0, wr1
 
 	PRINTF  LCD
-	.db CR,LF,"row", FHEX, a, "   col", FHEX, b
+	.db CR,LF,"->", FBIN, b
 	.db 0
 	rjmp	main
 	

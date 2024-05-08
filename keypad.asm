@@ -4,60 +4,73 @@
 .include "definitions.asm"
 
 ; ——————————————— definitions ————————————————
-.equ	KPD_DELAY = 30      ; keypad bouncing delay
-.def	wr0 = r2		    ; detected row in hex
-.def	wr1 = r1		    ; detected column in hex
-.def	mask = r14		    ; row mask indicating which row has been detected in bin
-.def	wr2 = r15		    ; semaphore: must enter LCD display routine, unary: 0 or other
+.equ	KPD_DELAY = 30          ; keypad bouncing delay
+.def	wr0 = r2	        ; detected row in hex
+.def	wr1 = r1		; detected column in hex
+.def	mask = r14		; row mask indicating which row has been detected in bin
+.def	wr2 = r15	        ; semaphore: must enter LCD display routine, unary: 0 or other
 
 ; —————————— interrupt vector table ——————————
 .org 0
 	jmp reset
-	jmp	ext_int0                ; external interrupt INT0
-	jmp	ext_int1                ; external interrupt INT1
+	jmp	ext_int0        ; external interrupt INT0
+	jmp	ext_int1        ; external interrupt INT1
 
 ; ————————— interrupt service routines ————————
 ext_int0:
-	_LDI	wr1, 0x00               ; detect row 1
+	_LDI	wr1, 0x00       ; detect row 1
 	_LDI	mask, 0b00000001
 	rjmp	column_detect
+
 ext_int1:
         _LDI    wr0, 0x00
         _LDI    mask, 0b00000001
         rjmp    row_detect
+
 column_detect:
-	OUTI	PORTD, 0xff             ; bit4-7 driven high
-
-
-row_detect:
-        OUTI    PORTD, 0x00      ; bit4-7 driven low
+	OUTI	PORTD, 0xff     ; bit4-7 driven high
+	rjmp    col7
 
 col7:
 	WAIT_MS	KPD_DELAY
-	OUTI	PORTD, 0x7f	    ; check column 7
+	OUTI	PORTD, 0x7f     ; check column 7
 	WAIT_MS	KPD_DELAY
-	in		w, PIND
-	and		w, mask
-	tst		w
-	brne	col6
-	_LDI	wr0, 0x00
-	rjmp	int_return
+	in	w, PIND
+	and	w, mask
+	tst	w
+	breq	col6
+	_LDI	wr1, 0x00
+	rjmp	row_detect
 
 col6:
 ; TODO TO BE COMPLETED AT THIS LOCATION
-	
+
+row_detect:
+        OUTI    PORTD, 0x00
+row7:
+	WAIT_MS	KPD_DELAY
+	OUTI	PORTD, 0xf7     ; check column 7
+	WAIT_MS	KPD_DELAY
+	in	w, PIND
+	and	w, mask
+	tst	w
+	breq	row6
+	_LDI	wr0, 0x00
+	rjmp	int_return
+
+row6:
+
 err_row0:			        
 	rjmp	int_return
-	; no reti (grouped in isr_return)
 
 int_return:
 	rcall   LCD_blink_off
         INVP	PORTB,0         ; visual feedback of key pressed acknowledge
-	ldi		_w,10		    ; sound feedback of key pressed acknowledge
+	ldi     _w,10           ; sound feedback of key pressed acknowledge
 
 beep01:
 	; TODO TO BE COMPLETED AT THIS LOCATION
-	_LDI	wr2,0xff
+	_LDI	wr2, 0xff
 	reti
 	
 .include "lcd.asm"			; include UART routines
@@ -108,7 +121,7 @@ main:
 	; TODO COMPLETE HERE
 
 	PRINTF  LCD
-	.db CR,LF,"KPD=",FHEX,a," ascii=",FHEX,b
+	.db CR,LF,"row=",wr0," col=",wr1
 	.db 0
 	rjmp	main
 	

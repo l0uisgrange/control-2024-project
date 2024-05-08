@@ -150,6 +150,12 @@ main:
 	PRINTF  LCD
 	.db CR,LF,"row", FHEX, a, "   col", FHEX, b
 	.db 0
+	WAIT_MS 1000
+	rcall   LCD_clear
+	rcall   LCD_home
+	PRINTF  LCD
+	.db	CR, LF, "its working"
+	.db     0
 	rjmp	main
 	
 ; code conversion table, character set #1 key to ASCII	

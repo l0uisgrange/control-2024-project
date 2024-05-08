@@ -13,26 +13,21 @@
 ; —————————— interrupt vector table ——————————
 .org 0
 	jmp reset
-	jmp	int0	            ; external interrupt INT0
-	jmp	int1	            ; external interrupt INT1
-
+	jmp	ext_int0                ; external interrupt INT0
+	jmp	ext_int1                ; external interrupt INT1
 
 ; ————————— interrupt service routines ————————
-int0:
-	_LDI	wr1, 0x00		; detect row 1
+ext_int0:
+	_LDI	wr1, 0x00               ; detect row 1
 	_LDI	mask, 0b00000001
 	rjmp	column_detect
-	; no reti (grouped in isr_return)
-
-int1:
+ext_int1:
         _LDI    wr0, 0x00
         _LDI    mask, 0b00000001
         rjmp    row_detect
-        ; no reti (grouped in isr_return)
-    
-
 column_detect:
-	OUTI	PORTD, 0xff	    ; bit4-7 driven high
+	OUTI	PORTD, 0xff             ; bit4-7 driven high
+
 
 row_detect:
         OUTI    PORTD, 0x00      ; bit4-7 driven low
@@ -71,17 +66,20 @@ beep01:
 
 .org 0x400
 
-reset:	LDSP	RAMEND		; Load Stack Pointer (SP)
+reset:	LDSP	RAMEND                  ; Load Stack Pointer (SP)
 	rcall	LCD_init		; initialize UART
 	OUTI	DDRD, 0xf0		; bit0-3 pull-up and bits4-7 driven low
 	OUTI	PORTD, 0x0f		; output
 	OUTI	DDRB, 0xff		; turn on LEDs
 	OUTI	EIMSK, 0x0f		; enable INT0-INT3
 	OUTI	EICRB, 0b0		;>at low level
-	sbi		DDRE, SPEAKER	; enable sound
-    PRINTF  LCD .db	CR,CR,"Welcome to Mastermind"
-    WAIT_MS 3000
-    PRINTF  LCD .db	CR,CR,"Number to guess:"
+	sbi	DDRE, SPEAKER           ; enable sound
+	PRINTF  LCD
+	.db	CR,CR,"Welcome to Mastermind"
+	WAIT_MS 3000
+	rcall   LCD_clear
+	PRINTF  LCD
+	.db	CR,CR,"Number to guess:"
 	clr		wr0
 	clr		wr1
 	clr		wr2
@@ -92,7 +90,7 @@ reset:	LDSP	RAMEND		; Load Stack Pointer (SP)
 	clr		b2
 	clr		b3
 	sei
-    ;jmp	main			; not useful in this case, kept for modularity
+	;jmp	main			; not useful in this case, kept for modularity
 
 ; —————————————— main program ——————————————
 main:
@@ -105,7 +103,8 @@ main:
 
 	; TODO COMPLETE HERE
 
-    PRINTF  LCD .db CR,LF,"KPD=",FHEX,a," ascii=",FHEX,b .db 0
+	PRINTF  LCD
+	.db CR,LF,"KPD=",FHEX,a," ascii=",FHEX,b .db 0
 	rjmp	main
 	
 ; code conversion table, character set #1 key to ASCII	

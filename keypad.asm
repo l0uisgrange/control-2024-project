@@ -24,7 +24,7 @@ ext_int0:
 
 ext_int1:
 	_LDI	wr1, 0x00
-	_LDI	mask, 0b00001101	; cheking if Y2 shutsdow => 
+	_LDI	mask, 0b11110100
 	rjmp	row_detect
 
 row_detect:
@@ -32,14 +32,12 @@ row_detect:
 row1:
 	WAIT_MS	KPD_DELAY
 	OUTI	PORTD, 0b00001111
-				   0b00001101 ; grille
-				   0b00000010 ; operation
 	WAIT_MS	KPD_DELAY
-	in		w, PIND
-	and		w, mask
+	in	w, PIND
+	and	w, mask
 	com 	w
-	tst		w
-	breq	row2
+	tst	w
+	brne	row2
 	_LDI	wr0, 0x07
 	rjmp	int_return
 

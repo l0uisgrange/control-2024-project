@@ -19,12 +19,12 @@
 ; ————————— interrupt service routines ————————
 ext_int0:
 	_LDI	wr1, 0x00
-	_LDI	mask, 0b00000001
+	_LDI	mask, 0b10000000
 	rjmp	column_detect
 
 ext_int1:
 	_LDI	wr1, 0x00
-	_LDI	mask, 0b00000001
+	_LDI	mask, 0b10000000
 	rjmp	column_detect
 
 column_detect:
@@ -32,7 +32,7 @@ column_detect:
 
 col7:
 	WAIT_MS	KPD_DELAY
-	OUTI	PORTD, 0x7f     ; check column 7
+	OUTI	PORTD, 0b01111111     ; check column 7
 	WAIT_MS	KPD_DELAY
 	in	w, PIND
 	and	w, mask
@@ -131,7 +131,7 @@ reset:	LDSP	RAMEND                  ; Load Stack Pointer (SP)
 	PRINTF  LCD
 	.db	CR, "Welcome to", CR, LF, "Mastermind"
 	.db     0
-	WAIT_MS 3000
+	; WAIT_MS 3000
 	rcall   LCD_clear
 	rcall   LCD_home
 	PRINTF  LCD
@@ -148,7 +148,6 @@ reset:	LDSP	RAMEND                  ; Load Stack Pointer (SP)
 	clr	b2
 	clr	b3
 	sei
-	;jmp	main			; not useful in this case, kept for modularity
 
 ; —————————————— main program ——————————————
 main:

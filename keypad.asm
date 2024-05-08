@@ -43,7 +43,21 @@ col7:
 	rjmp	row_detect
 
 col6:
+	WAIT_MS	KPD_DELAY
+	OUTI	PORTD, 0x7f     ; check column 7
+	WAIT_MS	KPD_DELAY
+	in	w, PIND
+	and	w, mask
+	tst	w
+	breq	col6
+	_LDI	wr1, 0x01
+	rjmp	row_detect
 ; TODO TO BE COMPLETED AT THIS LOCATION
+
+err_row0:
+	OUTI    PORTE, 0x01
+	OUTI    PORTB, 0x7f
+	rjmp	int_return
 
 row_detect:
         OUTI    PORTD, 0x00
@@ -71,16 +85,12 @@ row6:
 
 row5:
 
-err_row0:			        
-	rjmp	int_return
-
 int_return:
 	rcall   LCD_blink_off
-        INVP	PORTB,0         ; visual feedback of key pressed acknowledge
-	ldi     _w,10           ; sound feedback of key pressed acknowledge
+        INVP	PORTB, 0         ; visual feedback of key pressed acknowledge
+	ldi     _w, 10           ; sound feedback of key pressed acknowledge
 
-beep01:
-	; TODO TO BE COMPLETED AT THIS LOCATION
+beep:
 	_LDI	wr2, 0xff
 	reti
 	
@@ -130,17 +140,17 @@ main:
 	clr     a1
 	clr     a2
 	clr     a3
-	add     a0, wr0
+	add     a3, wr0
 	clr     b0
 	clr     b1
 	clr     b2
 	clr     b3
-	add     b0, wr1
+	add     b3, wr1
 
 	; TODO COMPLETE HERE
 
 	PRINTF  LCD
-	.db CR,LF,"row ",a,", col ",b
+	.db CR,LF,"row ", FHEX, a, ", col ", FHEX, b
 	.db 0
 	rjmp	main
 	

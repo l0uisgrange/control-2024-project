@@ -75,11 +75,12 @@ reset:	LDSP	RAMEND                  ; Load Stack Pointer (SP)
 	OUTI	EICRB, 0b0		;>at low level
 	sbi	DDRE, SPEAKER           ; enable sound
 	PRINTF  LCD
-	.db	CR,CR,"Welcome to Mastermind"
+	.db	CR, CR, "Welcome to"
+	.db     CR, CR, "Mastermind"
 	WAIT_MS 3000
-	rcall   LCD_clear
+	LCD_clear
 	PRINTF  LCD
-	.db	CR,CR,"Number to guess:"
+	.db	CR, CR, "Number to guess:"
 	clr		wr0
 	clr		wr1
 	clr		wr2

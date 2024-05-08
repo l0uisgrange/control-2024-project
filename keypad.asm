@@ -12,7 +12,7 @@
 
 ; —————————— interrupt vector table ——————————
 .org 0
-	jmp reset
+	jmp     reset
 	jmp	ext_int0        ; external interrupt INT0
 	jmp	ext_int1        ; external interrupt INT1
 
@@ -23,13 +23,10 @@ ext_int0:
 	rjmp	column_detect
 
 ext_int1:
-        _LDI    wr0, 0x00
-        _LDI    mask, 0b00000001
-        rjmp    row_detect
+	reti
 
 column_detect:
 	OUTI	PORTD, 0xff     ; bit4-7 driven high
-	rjmp    col7
 
 col7:
 	WAIT_MS	KPD_DELAY
@@ -49,8 +46,30 @@ col6:
 	in	w, PIND
 	and	w, mask
 	tst	w
-	breq	col6
+	breq	col5
 	_LDI	wr1, 0x01
+	rjmp	row_detect
+
+col5:
+	WAIT_MS	KPD_DELAY
+	OUTI	PORTD, 0xdf     ; check column 7
+	WAIT_MS	KPD_DELAY
+	in	w, PIND
+	and	w, mask
+	tst	w
+	breq	col4
+	_LDI	wr1, 0x02
+	rjmp	row_detect
+
+col4:
+	WAIT_MS	KPD_DELAY
+	OUTI	PORTD, 0xef     ; check column 7
+	WAIT_MS	KPD_DELAY
+	in	w, PIND
+	and	w, mask
+	tst	w
+	breq	err_row0
+	_LDI	wr1, 0x03
 	rjmp	row_detect
 
 ; TODO TO BE COMPLETED AT THIS LOCATION
@@ -138,24 +157,16 @@ main:
 	clr     a1
 	clr     a2
 	clr     a3
-	add     a3, wr0
+	add     a0, wr0
 	clr     b0
 	clr     b1
 	clr     b2
 	clr     b3
-	add     b3, wr1
-
-	; TODO COMPLETE HERE
+	add     b0, wr1
 
 	PRINTF  LCD
 	.db CR,LF,"row", FHEX, a, "   col", FHEX, b
 	.db 0
-	WAIT_MS 1000
-	rcall   LCD_clear
-	rcall   LCD_home
-	PRINTF  LCD
-	.db	CR, LF, "its working"
-	.db     0
 	rjmp	main
 	
 ; code conversion table, character set #1 key to ASCII	

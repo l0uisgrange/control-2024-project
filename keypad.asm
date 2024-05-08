@@ -28,11 +28,10 @@ ext_int1:
 	rjmp	row_detect
 
 row_detect:
-	OUTI	PORTD, 0xff
 
 row1:
 	WAIT_MS	KPD_DELAY
-	OUTI	PORTD, 0b11110000
+	OUTI	PORTD, 0b00001111
 	WAIT_MS	KPD_DELAY
 	in		w, PIND
 	add		wr1, w

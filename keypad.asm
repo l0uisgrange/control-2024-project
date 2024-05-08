@@ -35,13 +35,15 @@ row1:
 	OUTI	PORTD, 0b11110000
 	WAIT_MS	KPD_DELAY
 	in		w, PIND
+	add		wr1, w
+	; insert here
+	rjmp	int_return
+
+row2:
 	and		w, mask
 	tst		w
 	breq	row2
 	add		wr1, w
-	rjmp	int_return
-
-row2:
 	
 
 int_return:

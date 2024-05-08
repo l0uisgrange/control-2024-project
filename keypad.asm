@@ -23,7 +23,9 @@ ext_int0:
 	rjmp	row_detect
 
 ext_int1:
-	reti
+	_LDI	wr1, 0x00
+	_LDI	mask, 0b10111111
+	rjmp	row_detect
 
 row_detect:
 	OUTI	PORTD, 0xff
@@ -35,12 +37,12 @@ row1:
 	in		w, PIND
 	and		w, mask
 	tst		w
-	brne	row2
+	breq	row2
 	_LDI	wr1, 0x07
 	rjmp	int_return
 
 row2:
-	reti
+	
 
 int_return:
 	rcall   LCD_blink_off

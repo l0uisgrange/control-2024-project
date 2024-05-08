@@ -89,8 +89,6 @@ int_return:
 	rcall   LCD_blink_off
         INVP	PORTB, 0         ; visual feedback of key pressed acknowledge
 	ldi     _w, 10           ; sound feedback of key pressed acknowledge
-
-beep:
 	_LDI	wr2, 0xff
 	reti
 	
@@ -150,7 +148,7 @@ main:
 	; TODO COMPLETE HERE
 
 	PRINTF  LCD
-	.db CR,LF,"row ", FHEX, a, ", col ", FHEX, b
+	.db CR,LF,"row", FHEX, a, "   col", FHEX, b
 	.db 0
 	rjmp	main
 	

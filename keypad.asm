@@ -24,7 +24,7 @@ ext_int0:
 
 ext_int1:
 	_LDI	wr1, 0x00
-	_LDI	mask, 0b10000000
+	_LDI	mask, 0b01000000
 	rjmp	column_detect
 
 column_detect:

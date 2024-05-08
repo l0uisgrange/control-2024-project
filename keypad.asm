@@ -19,93 +19,28 @@
 ; ————————— interrupt service routines ————————
 ext_int0:
 	_LDI	wr1, 0x00
-	_LDI	mask, 0b10000000
-	rjmp	column_detect
+	_LDI	mask, 0b10111111
+	rjmp	row_detect
 
 ext_int1:
 	reti
 
-column_detect:
-	OUTI	PORTD, 0xff     ; bit4-7 driven high
-
-col7:
-	WAIT_MS	KPD_DELAY
-	OUTI	PORTD, 0b01111111     ; check column 7
-	WAIT_MS	KPD_DELAY
-	in	w, PIND
-	and	w, mask
-	tst	w
-	breq	col6
-	_LDI	wr1, w
-	rjmp	row_detect
-
-col6:
-	_LDI	mask, 0b01000000
-	WAIT_MS	KPD_DELAY
-	OUTI	PORTD, 0xbf     ; check column 7
-	WAIT_MS	KPD_DELAY
-	in	w, PIND
-	and	w, mask
-	tst	w
-	breq	col5
-	_LDI	wr1, w
-	rjmp	row_detect
-
-col5:
-	_LDI	mask, 0b00100000
-	WAIT_MS	KPD_DELAY
-	OUTI	PORTD, 0xdf     ; check column 7
-	WAIT_MS	KPD_DELAY
-	in	w, PIND
-	and	w, mask
-	tst	w
-	breq	col4
-	_LDI	wr1, 0x02
-	rjmp	row_detect
-
-col4:
-	_LDI	mask, 0b00010000
-	WAIT_MS	KPD_DELAY
-	OUTI	PORTD, 0xef     ; check column 7
-	WAIT_MS	KPD_DELAY
-	in	w, PIND
-	and	w, mask
-	tst	w
-	breq	err_row0
-	_LDI	wr1, 0x03
-	rjmp	row_detect
-
-; TODO TO BE COMPLETED AT THIS LOCATION
-
-err_row0:
-	rjmp	int_return
-
 row_detect:
-        OUTI    PORTD, 0x00
+	OUTI	PORTD, 0xff
 
-row7:
+row1:
 	WAIT_MS	KPD_DELAY
-	OUTI	PORTD, 0xf7     ; check column 7
+	OUTI	PORTD, 0b11110000
 	WAIT_MS	KPD_DELAY
-	in	w, PIND
-	and	w, mask
-	tst	w
-	breq	row6
-	_LDI	wr0, 0x00
+	in		w, PIND
+	and		w, mask
+	tst		w
+	brne	row2
+	_LDI	wr1, 0x07
 	rjmp	int_return
 
-row6:
-	WAIT_MS	KPD_DELAY
-	OUTI	PORTD, 0xfb     ; check column 7
-	WAIT_MS	KPD_DELAY
-	in	w, PIND
-	and	w, mask
-	tst	w
-	breq	row5
-	_LDI	wr0, 0x01
-	rjmp	int_return
-
-row5:
+row2:
+	reti
 
 int_return:
 	rcall   LCD_blink_off

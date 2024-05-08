@@ -19,12 +19,12 @@
 ; ————————— interrupt service routines ————————
 ext_int0:
 	_LDI	wr0, 0x00
-	_LDI	mask, 0b11110100
+	_LDI	mask, 0b00000100
 	rjmp	row_detect
 
 ext_int1:
 	_LDI	wr0, 0x00
-	_LDI	mask, 0b11110100
+	_LDI	mask, 0b00000100
 	rjmp	row_detect
 
 row_detect:

@@ -19,12 +19,12 @@
 ; ————————— interrupt service routines ————————
 ext_int0:
 	_LDI	wr1, 0x00
-	_LDI	mask, 0b10111111
+	_LDI	mask, 0b00001101
 	rjmp	row_detect
 
 ext_int1:
 	_LDI	wr1, 0x00
-	_LDI	mask, 0b10111111
+	_LDI	mask, 0b00001101	; cheking if Y2 shutsdow => 
 	rjmp	row_detect
 
 row_detect:
@@ -32,17 +32,18 @@ row_detect:
 row1:
 	WAIT_MS	KPD_DELAY
 	OUTI	PORTD, 0b00001111
+				   0b00001101 ; grille
+				   0b00000010 ; operation
 	WAIT_MS	KPD_DELAY
 	in		w, PIND
-	add		wr1, w
-	; insert here
+	and		w, mask
+	com 	w
+	tst		w
+	breq	row2
+	_LDI	wr0, 0x07
 	rjmp	int_return
 
 row2:
-	and		w, mask
-	tst		w
-	breq	row2
-	add		wr1, w
 	
 
 int_return:

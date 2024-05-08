@@ -18,12 +18,12 @@
 
 ; ————————— interrupt service routines ————————
 ext_int0:
-	_LDI	wr1, 0x00
+	_LDI	wr0, 0x00
 	_LDI	mask, 0b11110100
 	rjmp	row_detect
 
 ext_int1:
-	_LDI	wr1, 0x00
+	_LDI	wr0, 0x00
 	_LDI	mask, 0b11110100
 	rjmp	row_detect
 
@@ -34,9 +34,7 @@ row1:
 	OUTI	PORTD, 0b00001111
 	WAIT_MS	KPD_DELAY
 	in	w, PIND
-	PRINTF  LCD
-	.db CR,LF,">", FBIN, w
-	.db 0
+	in      wr1, PIND
 	and	w, mask
 	tst	w
 	brne	row2
@@ -105,9 +103,9 @@ main:
 	clr     b3
 	add     b0, wr1
 
-	;PRINTF  LCD
-	;.db CR,LF,">", FBIN, b
-	;.db 0
+	PRINTF  LCD
+	.db CR,LF,">", FBIN, b
+	.db 0
 	rjmp	main
 	
 ; code conversion table, character set #1 key to ASCII	

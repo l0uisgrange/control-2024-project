@@ -38,7 +38,7 @@ col7:
 	and	w, mask
 	tst	w
 	breq	col6
-	_LDI	wr1, 0x00
+	_LDI	wr1, w
 	rjmp	row_detect
 
 col6:

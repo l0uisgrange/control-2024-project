@@ -59,6 +59,17 @@ row7:
 	rjmp	int_return
 
 row6:
+	WAIT_MS	KPD_DELAY
+	OUTI	PORTD, 0xfb     ; check column 7
+	WAIT_MS	KPD_DELAY
+	in	w, PIND
+	and	w, mask
+	tst	w
+	breq	row5
+	_LDI	wr0, 0x01
+	rjmp	int_return
+
+row5:
 
 err_row0:			        
 	rjmp	int_return
@@ -93,8 +104,9 @@ reset:	LDSP	RAMEND                  ; Load Stack Pointer (SP)
 	.db     0
 	WAIT_MS 3000
 	rcall   LCD_clear
+	rcall   LCD_home
 	PRINTF  LCD
-	.db	CR, "Number to guess:",LF
+	.db	CR, "Number to guess:", LF
 	.db     0
 	rcall   LCD_blink_on
 	clr	wr0
@@ -111,17 +123,24 @@ reset:	LDSP	RAMEND                  ; Load Stack Pointer (SP)
 
 ; —————————————— main program ——————————————
 main:
-	tst	wr2				; check flag/semaphore
-	breq	main
+	tst     wr2				; check flag/semaphore
+	breq    main
 	clr	wr2
 	clr	a0
-	add	a0, wr1
-	add	a0, wr0
+	clr     a1
+	clr     a2
+	clr     a3
+	add     a0, wr0
+	clr     b0
+	clr     b1
+	clr     b2
+	clr     b3
+	add     b0, wr1
 
 	; TODO COMPLETE HERE
 
 	PRINTF  LCD
-	.db CR,LF,"row=",wr0," col=",wr1
+	.db CR,LF,"row ",a,", col ",b
 	.db 0
 	rjmp	main
 	

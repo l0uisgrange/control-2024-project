@@ -23,9 +23,7 @@ ext_int0:
 	rjmp	column_detect
 
 ext_int1:
-	_LDI	wr1, 0x00
-	_LDI	mask, 0b01000000
-	rjmp	column_detect
+	reti
 
 column_detect:
 	OUTI	PORTD, 0xff     ; bit4-7 driven high
@@ -42,6 +40,7 @@ col7:
 	rjmp	row_detect
 
 col6:
+	_LDI	mask, 0b01000000
 	WAIT_MS	KPD_DELAY
 	OUTI	PORTD, 0xbf     ; check column 7
 	WAIT_MS	KPD_DELAY
@@ -53,6 +52,7 @@ col6:
 	rjmp	row_detect
 
 col5:
+	_LDI	mask, 0b00100000
 	WAIT_MS	KPD_DELAY
 	OUTI	PORTD, 0xdf     ; check column 7
 	WAIT_MS	KPD_DELAY
@@ -64,6 +64,7 @@ col5:
 	rjmp	row_detect
 
 col4:
+	_LDI	mask, 0b00010000
 	WAIT_MS	KPD_DELAY
 	OUTI	PORTD, 0xef     ; check column 7
 	WAIT_MS	KPD_DELAY

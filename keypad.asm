@@ -35,7 +35,6 @@ row1:
 	WAIT_MS	KPD_DELAY
 	in	w, PIND
 	and	w, mask
-	com 	w
 	tst	w
 	brne	row2
 	_LDI	wr0, 0x07

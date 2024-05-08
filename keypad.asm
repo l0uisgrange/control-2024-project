@@ -51,7 +51,8 @@ err_row0:
 	; no reti (grouped in isr_return)
 
 int_return:
-        INVP	PORTB,0		                        ; visual feedback of key pressed acknowledge
+	rcall   LCD_blink_off
+        INVP	PORTB,0         ; visual feedback of key pressed acknowledge
 	ldi		_w,10		    ; sound feedback of key pressed acknowledge
 
 beep01:
@@ -75,37 +76,40 @@ reset:	LDSP	RAMEND                  ; Load Stack Pointer (SP)
 	OUTI	EICRB, 0b0		;>at low level
 	sbi	DDRE, SPEAKER           ; enable sound
 	PRINTF  LCD
-	.db	CR, CR, "Welcome to"
-	.db     CR, CR, "Mastermind"
+	.db	CR, "Welcome to", CR, LF, "Mastermind"
+	.db     0
 	WAIT_MS 3000
-	LCD_clear
+	rcall   LCD_clear
 	PRINTF  LCD
-	.db	CR, CR, "Number to guess:"
-	clr		wr0
-	clr		wr1
-	clr		wr2
-	clr		a1				
-	clr		a2
-	clr		a3
-	clr		b1
-	clr		b2
-	clr		b3
+	.db	CR, "Number to guess:",LF
+	.db     0
+	rcall   LCD_blink_on
+	clr	wr0
+	clr	wr1
+	clr	wr2
+	clr	a1
+	clr	a2
+	clr	a3
+	clr	b1
+	clr	b2
+	clr	b3
 	sei
 	;jmp	main			; not useful in this case, kept for modularity
 
 ; —————————————— main program ——————————————
 main:
-	tst		wr2				; check flag/semaphore
+	tst	wr2				; check flag/semaphore
 	breq	main
-	clr		wr2
-	clr		a0
-	add		a0, wr1
-	add		a0, wr0
+	clr	wr2
+	clr	a0
+	add	a0, wr1
+	add	a0, wr0
 
 	; TODO COMPLETE HERE
 
 	PRINTF  LCD
-	.db CR,LF,"KPD=",FHEX,a," ascii=",FHEX,b .db 0
+	.db CR,LF,"KPD=",FHEX,a," ascii=",FHEX,b
+	.db 0
 	rjmp	main
 	
 ; code conversion table, character set #1 key to ASCII	

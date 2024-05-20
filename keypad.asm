@@ -141,6 +141,7 @@ lookup0:
 	mov	w, row
 	MUL4	w
 	add	zl, w
+	ADDI	zl, 1
 	lpm
 	clr	@0
 	mov	@0, r0
@@ -152,6 +153,7 @@ main:
 	PRINTF	LCD
 	.db CR, "nbr to guess: "
 	.db 0
+	rcall	LCD_blink_on
 setup:
 	DECODE	b0
 	cpi	b0, 0x20
@@ -161,6 +163,7 @@ setup:
 	PRINTF	LCD
 	.db CR, "nbr to guess: ", FCHAR, b	; final look at value to guess
 	.db 0
+	rcall	LCD_blink_off
 	WAIT_MS	3000
 	; --- Guessing ---
 	rcall	LCD_clear
@@ -168,6 +171,7 @@ setup:
 	PRINTF	LCD
 	.db CR, "guess: "
 	.db 0
+	rcall	LCD_blink_on
 guess:
 	DECODE	a0
 	cpi	a0, 0x20
@@ -177,5 +181,6 @@ guess:
 	PRINTF	LCD
 	.db CR, "guess: ", FCHAR, a
 	.db 0
+	rcall	LCD_blink_off
 done:
 	rjmp	done

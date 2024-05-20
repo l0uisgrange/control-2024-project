@@ -39,71 +39,69 @@
 isr_ext_int0:
 	;INVP	PORTB,0			
 	_LDI	row, 0x00		; detect row 1
-	_LDI	mask, 0x01
 	rjmp	column_detect
 
 isr_ext_int1:
 	_LDI	row, 0x01
-	_LDI	mask, 0x02
 	rjmp	column_detect
 
 isr_ext_int2:
 	_LDI	row, 0x02
-	_LDI	mask, 0x04
 	rjmp	column_detect
 
 isr_ext_int3:
 	_LDI	row, 0x03
-	_LDI	mask, 0x08
 	rjmp	column_detect
 
 column_detect:
-	OUTI	PORTD,0xff	; bit4-7 driven high
+	OUTI	DDRD,0xff		
+	OUTI	PORTD,0x0f		;>(needs the two lines)
+	_LDI	mask, 0x0f
 	
 col0:
 	WAIT_MS	KPD_DELAY
-	OUTI	PORTD,0x7f	; check column 0
+	;OUTI	PORTD,0x7f	; check column 0
 	WAIT_MS	KPD_DELAY
 	in		w,PIND
-	and		w,mask
+	_EORI	w,mask
 	tst		w
-	brne	col1
+	breq	col1
 	_LDI	col, 0x00
 	;INVP	PORTB,7		;;debug
 	rjmp	isr_return
 	
 col1:
 	WAIT_MS	KPD_DELAY
-	OUTI	PORTD,0xbf	; check column 0
+	;OUTI	PORTD,0xbf	; check column 0
 	WAIT_MS	KPD_DELAY
 	in		w,PIND
-	and		w,mask
+	_EORI	w,mask
 	tst		w
-	brne	col2
+	breq	col2
 	_LDI	col, 0x01
 	;INVP	PORTB,7		;;debug
 	rjmp	isr_return
 
 col2:
 	WAIT_MS	KPD_DELAY
-	OUTI	PORTD,0xDf	; check column 0
+	;OUTI	PORTD,0xDf	; check column 0
 	WAIT_MS	KPD_DELAY
 	in		w,PIND
-	and		w,mask
+	_EORI	w,mask
 	tst		w
-	brne	col3
+	breq	col3
 	_LDI	col, 0x02
 	;INVP	PORTB,7		;;debug
 	rjmp	isr_return
 
 col3:
 	WAIT_MS	KPD_DELAY
-	OUTI	PORTD,0xef	; check column 0
+	;OUTI	PORTD,0xef	; check column 0
 	WAIT_MS	KPD_DELAY
 	in		w,PIND
-	and		w,mask
+	_EORI	w,mask
 	tst		w
-	brne	err_row0
+	breq	err_row0
 	_LDI	col, 0x03
 	;INVP	PORTB,7		;;debug
 	rjmp	isr_return

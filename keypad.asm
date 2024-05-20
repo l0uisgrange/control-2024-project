@@ -134,4 +134,4 @@ PRINTF LCD
 	
 ; code conversion table, character set #1 key to ASCII	
 KeySet01:
-.db ; TO BE COMPLETED AT THIS LOCATION
+.db "123A456B789C*0#D"

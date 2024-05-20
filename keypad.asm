@@ -22,7 +22,7 @@
 .def	row = r2		; detected row in hex
 .def	col = r1		; detected column in hex
 .def	mask = r14		; row mask indicating which row has been detected in bin
-.def	wr2 = r15		; semaphore: must enter LCD display routine, unary: 0 or other
+.def	sem = r15		; semaphore: must enter LCD display routine, unary: 0 or other
 
 	; === interrupt vector table ===
 .org 0
@@ -81,11 +81,7 @@ col6:
 isr_return:
 	INVP	PORTB,0		; visual feedback of key pressed acknowledge
 	ldi		_w,10		; sound feedback of key pressed acknowledge
-beep01:	
-	
-	; TO BE COMPLETED AT THIS LOCATION
-	
-	_LDI	wr2,0xff
+	_LDI	sem,0xff
 	reti
 	
 .include "lcd.asm"			; include UART routines
@@ -110,7 +106,7 @@ reset:	LDSP	RAMEND		; Load Stack Pointer (SP)
 
 	clr		row
 	clr		col
-	clr		wr2
+	clr		sem
 
 	clr		a1				
 	clr		a2
@@ -125,9 +121,9 @@ reset:	LDSP	RAMEND		; Load Stack Pointer (SP)
 	; === main program ===
 main:
 
-	tst		wr2				; check flag/semaphore
+	tst		sem				; check flag/semaphore
 	breq	main
-	clr		wr2	
+	clr		sem	
 
 	clr		a0
 	add		a0, row

@@ -156,11 +156,15 @@ setup:
 	DECODE	b0
 	cpi	b0, 0x20
 	breq	setup
+	rcall	LCD_clear
+	rcall	LCD_home
 	PRINTF	LCD
 	.db CR, "nbr to guess: ", FCHAR, b	; final look at value to guess
 	.db 0
 	WAIT_MS	3000
 	; --- Guessing ---
+	rcall	LCD_clear
+	rcall	LCD_home
 	PRINTF	LCD
 	.db CR, "guess: "
 	.db 0
@@ -168,6 +172,8 @@ guess:
 	DECODE	a0
 	cpi	a0, 0x20
 	breq	guess
+	rcall	LCD_clear
+	rcall	LCD_home
 	PRINTF	LCD
 	.db CR, "guess: ", FCHAR, a
 	.db 0

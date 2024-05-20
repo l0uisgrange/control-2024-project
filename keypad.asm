@@ -38,7 +38,8 @@
 	; === interrupt service routines ===
 isr_ext_int0:
 	;INVP	PORTB,0			
-	_LDI	row, 0x00		; detect row 1
+	_LDI	row, 0x00		
+	_LDI	mask, 0b00000001
 	rjmp	column_detect
 
 isr_ext_int1:
@@ -54,20 +55,17 @@ isr_ext_int3:
 	rjmp	column_detect
 
 column_detect:
-	OUTI	DDRD,0xff		
-	OUTI	PORTD,0x0f		;>(needs the two lines)
-	_LDI	mask, 0x0f
+	OUTI	PORTD, 0xff
 	
 col0:
 	WAIT_MS	KPD_DELAY
-	;OUTI	PORTD,0x7f	; check column 0
+	OUTI	PORTD, 0x7f	; check column 7
 	WAIT_MS	KPD_DELAY
 	in		w,PIND
-	eor	w,mask
+	and		w,mask
 	tst		w
-	breq	col1
+	brne	col1
 	_LDI	col, 0x00
-	;INVP	PORTB,7		;;debug
 	rjmp	isr_return
 	
 col1:

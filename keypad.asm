@@ -63,7 +63,7 @@ col0:
 	;OUTI	PORTD,0x7f	; check column 0
 	WAIT_MS	KPD_DELAY
 	in		w,PIND
-	_EORI	w,mask
+	eor	w,mask
 	tst		w
 	breq	col1
 	_LDI	col, 0x00
@@ -75,7 +75,7 @@ col1:
 	;OUTI	PORTD,0xbf	; check column 0
 	WAIT_MS	KPD_DELAY
 	in		w,PIND
-	_EORI	w,mask
+	eor		w,mask
 	tst		w
 	breq	col2
 	_LDI	col, 0x01
@@ -87,7 +87,7 @@ col2:
 	;OUTI	PORTD,0xDf	; check column 0
 	WAIT_MS	KPD_DELAY
 	in		w,PIND
-	_EORI	w,mask
+	eor		w,mask
 	tst		w
 	breq	col3
 	_LDI	col, 0x02
@@ -99,7 +99,7 @@ col3:
 	;OUTI	PORTD,0xef	; check column 0
 	WAIT_MS	KPD_DELAY
 	in		w,PIND
-	_EORI	w,mask
+	eor		w,mask
 	tst		w
 	breq	err_row0
 	_LDI	col, 0x03

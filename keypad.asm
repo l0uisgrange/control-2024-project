@@ -56,19 +56,57 @@ isr_ext_int3:
 column_detect:
 
 	OUTI	PORTD,0xff	; bit4-7 driven high
-col7:
+	clr		mask
+col0:
 	WAIT_MS	KPD_DELAY
-	OUTI	PORTD,0x7f	; check column 7
+	OUTI	PORTD,0x7f	; check column 0
+	ldi		mask, 0x80
 	WAIT_MS	KPD_DELAY
 	in		w,PIND
 	and		w,mask
 	tst		w
-	brne	col6
-	_LDI	col,0x00
+	breq	col1
+	_LDI	col, 0x00
 	;INVP	PORTB,7		;;debug
 	rjmp	isr_return
 	
-col6:
+col1:
+	WAIT_MS	KPD_DELAY
+	OUTI	PORTD,0xbf	; check column 0
+	ldi		mask, 0x40
+	WAIT_MS	KPD_DELAY
+	in		w,PIND
+	and		w,mask
+	tst		w
+	breq	col2
+	_LDI	col, 0x01
+	;INVP	PORTB,7		;;debug
+	rjmp	isr_return
+
+col2:
+	WAIT_MS	KPD_DELAY
+	OUTI	PORTD,0xDf	; check column 0
+	ldi		mask, 0x20
+	WAIT_MS	KPD_DELAY
+	in		w,PIND
+	and		w,mask
+	tst		w
+	breq	col3
+	_LDI	col, 0x02
+	;INVP	PORTB,7		;;debug
+	rjmp	isr_return
+
+col3:
+	WAIT_MS	KPD_DELAY
+	OUTI	PORTD,0xef	; check column 0
+	ldi		mask, 0x10
+	WAIT_MS	KPD_DELAY
+	in		w,PIND
+	and		w,mask
+	tst		w
+	breq	err_row0
+	_LDI	col, 0x03
+	;INVP	PORTB,7		;;debug
 	rjmp	isr_return
 
 ; TO BE COMPLETED AT THIS LOCATION
@@ -127,12 +165,14 @@ main:
 
 	clr		a0
 	add		a0, row
+	clr		b0
+	add		b0, col
 
 	; TO BE COMPLETED AT THIS LOCATION		; decoding ascii
 	
 	
 PRINTF LCD
-.db	CR,LF,"KPD=",FHEX,a," ascii=",FHEX,b
+.db	CR,LF,"row=",FHEX,a," col=",FHEX,b
 .db	0
 	rjmp	main
 	

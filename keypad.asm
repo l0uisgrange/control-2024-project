@@ -145,17 +145,18 @@ main:
 	add a0, col
 
 	ldi zl, low(2*krow0)	; load table of row 0
-	ldi zh, low(2*krow0)
+	ldi zh, high(2*krow0)
 	add	zl, col
 	mov	w, row
 	MUL4	w
 	add zl, w
 	lpm
+	clr	b0
 	mov b0, r0
 	
 
 PRINTF LCD
-.db CR,LF, "rc=", FHEX, a, " ASCII=", FHEX, b
+.db CR,LF, "rc=", FHEX, a, " ASCII=", FCHAR, b
 .db 0
 	rjmp main
 

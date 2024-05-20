@@ -60,7 +60,7 @@ column_detect:
 col0:
 	WAIT_MS	KPD_DELAY
 	OUTI	PORTD,0x7f	; check column 0
-	ldi		mask, 0x80
+	_LDI	mask, 0x80
 	WAIT_MS	KPD_DELAY
 	in		w,PIND
 	and		w,mask
@@ -73,7 +73,7 @@ col0:
 col1:
 	WAIT_MS	KPD_DELAY
 	OUTI	PORTD,0xbf	; check column 0
-	ldi		mask, 0x40
+	_LDI	mask, 0x40
 	WAIT_MS	KPD_DELAY
 	in		w,PIND
 	and		w,mask
@@ -86,7 +86,7 @@ col1:
 col2:
 	WAIT_MS	KPD_DELAY
 	OUTI	PORTD,0xDf	; check column 0
-	ldi		mask, 0x20
+	_LDI	mask, 0x20
 	WAIT_MS	KPD_DELAY
 	in		w,PIND
 	and		w,mask
@@ -99,7 +99,7 @@ col2:
 col3:
 	WAIT_MS	KPD_DELAY
 	OUTI	PORTD,0xef	; check column 0
-	ldi		mask, 0x10
+	_LDI	mask, 0x10
 	WAIT_MS	KPD_DELAY
 	in		w,PIND
 	and		w,mask

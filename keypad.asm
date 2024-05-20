@@ -113,6 +113,7 @@ col3:
 	
 	err_row0:			; debug purpose and filter residual glitches		
 	;INVP	PORTB,0
+	_LDI	col, 0x07
 	rjmp	isr_return
 	; no reti (grouped in isr_return)
 

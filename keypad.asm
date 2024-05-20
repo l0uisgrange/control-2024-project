@@ -72,9 +72,9 @@ col1:
 	WAIT_MS	KPD_DELAY
 	OUTI	PORTD,0b11011111	; check column 1
 	WAIT_MS	KPD_DELAY
-	in		w,PIND		; in PIND
-	and		w,mask		
-	tst		w			; testing if column is pressed (test for 0 or minus)
+	in	w,PIND		; in PIND
+	and	w,mask		
+	tst	w			; testing if column is pressed (test for 0 or minus)
 	brne	col0
 	_LDI	col,0x01
 	INVP	PORTB,5		; LED inverts if key pressed!
@@ -99,42 +99,43 @@ isr_return:
 .include "lcd.asm"			; include UART routines
 .include "printf.asm"
 
-
 .org 0x400
 
 reset:	
 	LDSP	RAMEND		; Load Stack Pointer (SP)
 	rcall	LCD_init		; initialize UART
-
 	OUTI	DDRD,0xf0		; bit0-3 pull-up and bits4-7 driven low
 	OUTI	PORTD,0x0f		;>(needs the two lines)
 	OUTI	DDRB,0xff		; turn on LEDs
 	OUTI	EIMSK,0x0f		; enable INT0-INT3
 	OUTI	EICRB,0b0		;>at low level
-	sbi		DDRE,SPEAKER	; enable sound
-
-	clr		col
-	clr		row
-	clr		sem
-
-	clr		a1				
-	clr		a2
-	clr		a3
-	clr		b1
-	clr		b2
-	clr		b3
-
+	PRINTF  LCD
+	.db	CR, "Welcome to", CR, LF, "Mastermind"
+	.db     0
+	WAIT_MS 3000
+	rcall   LCD_clear
+	PRINTF  LCD
+	.db	CR, "Number to guess:",LF
+	.db     0
+	rcall   LCD_blink_on
+	clr	col
+	clr	row
+	clr	sem
+	clr	a1				
+	clr	a2
+	clr	a3
+	clr	b1
+	clr	b2
+	clr	b3
 	sei
-
 	jmp main
 
 main:
 	clr a0
 	add a0, row
 	add a0, col
-
-	ldi zl, low(2*krow0)	; load table of row 0
-	ldi zh, high(2*krow0)
+	ldi zl, low(2*lookup)	; load table of row 0
+	ldi zh, high(2*lookup)
 	add	zl, col
 	mov	w, row
 	MUL4	w
@@ -142,14 +143,12 @@ main:
 	lpm
 	clr	b0
 	mov b0, r0
-	
-
-PRINTF LCD
-.db CR,LF, "rc=", FHEX, a, " ASCII=", FCHAR, b
-.db 0
+	PRINTF LCD
+	.db CR,LF, "rc=", FHEX, a, " ASCII=", FCHAR, b
+	.db 0
 	rjmp main
 
 
-; code conversion table, character set #1 key to ASCII	
-krow0:
+; ——— lookup table ———
+lookup:
 .db "123A456B789C*0#D"

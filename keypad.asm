@@ -134,8 +134,8 @@ main:
 	clr a0
 	add a0, row
 	add a0, col
-	ldi zl, low(2*lookup)	; load table of row 0
-	ldi zh, high(2*lookup)
+	ldi zl, low(2*lookup0)	; load table of row 0
+	ldi zh, high(2*lookup0)
 	add	zl, col
 	mov	w, row
 	MUL4	w
@@ -144,11 +144,11 @@ main:
 	clr	b0
 	mov b0, r0
 	PRINTF LCD
-	.db CR,LF, "rc=", FHEX, a, " ASCII=", FCHAR, b
+	.db CR, "number: ", FCHAR, b
 	.db 0
 	rjmp main
 
 
 ; ——— lookup table ———
-lookup:
+lookup0:
 .db "123A456B789C*0#D"

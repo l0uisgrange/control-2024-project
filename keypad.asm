@@ -1,14 +1,3 @@
-; file	kpd4x4_S.asm   target ATmega128L-4MHz-STK300		
-; purpose keypad 4x4 acquisition and print
-;  uses four external interrupts and ports internal pull-up
-
-; solutions based on the methodology presented in EE208-MICRO210_ESP-2024-v1.0.fm
-;>alternate solutions also possible
-; standalone solution/file; not meeant as a modular solution and thus must be
-;>adapted when used in a complex project
-; solution based on interrupts detected on each row; not optimal but functional if
-;>and external four-input gate is not available
-
 .include "macros.asm"		; include macro definitions
 .include "definitions.asm"	; include register/constant definitions
 
@@ -19,129 +8,128 @@
 
 .equ	KPD_DELAY = 30	; msec, debouncing keys of keypad
 
-.def	row = r2		; detected row in hex
-.def	col = r1		; detected column in hex
+.def	wr0 = r2		; detected row in hex
+.def	wr1 = r1		; detected column in hex
 .def	mask = r14		; row mask indicating which row has been detected in bin
-.def	sem = r15		; semaphore: must enter LCD display routine, unary: 0 or other
+.def	wr2 = r15		; semaphore: must enter LCD display routine, unary: 0 or other
 
-	; === interrupt vector table ===
 .org 0
 	jmp reset
 	jmp	isr_ext_int0	; external interrupt INT0
 	jmp	isr_ext_int1	; external interrupt INT1
-	jmp	isr_ext_int2	; external interrupt INT2
-	jmp	isr_ext_int3	; external interrupt INT3
+	jmp isr_ext_int2	; external interrupt INT2
+	jmp isr_ext_int3	; external interrupt INT3
 
-
-; TO BE COMPLETED AT THIS LOCATION
-
-	; === interrupt service routines ===
 isr_ext_int0:
-	;INVP	PORTB,0			
-	_LDI	row, 0x00		
-	_LDI	mask, 0x01
+	;in _sreg, SREG			;sauvegarde du contexte
+
+	INVP PORTB,0			;debug
+	_LDI	wr1, 0x00		; detect row 0
+	_LDI	mask, 0b00000001
+
+	out SREG, _sreg			;restauration du contexte
+
 	rjmp	column_detect
 
 isr_ext_int1:
-	_LDI	row, 0x01
-	_LDI	mask, 0x02
+	INVP PORTB,1			;debug
+	_LDI	wr1, 0x01		; detect row 1
+	_LDI	mask, 0b00000010
+
 	rjmp	column_detect
 
 isr_ext_int2:
-	_LDI	row, 0x02
-	_LDI	mask, 0x04
+	INVP PORTB,2			;debug
+	_LDI	wr1, 0x02		; detect row 2
+	_LDI	mask, 0b00000100
+
 	rjmp	column_detect
 
 isr_ext_int3:
-	_LDI	row, 0x03
-	_LDI	mask, 0x08
+	INVP PORTB,3			;debug
+	_LDI	wr1, 0x03		; detect row 1
+	_LDI	mask, 0b00001000
+
 	rjmp	column_detect
 
 column_detect:
-	OUTI	PORTD, 0xff
-	
-col3:
+	OUTI	KPDO,0xff	; bit4-7 driven high (lines)
+
+col3:					
 	WAIT_MS	KPD_DELAY
-	OUTI	DDRD, 0xff
-	OUTI	PORTD, 0x7f	; check column 7
+	OUTI	KPDO,0b01111111	; check column 3
 	WAIT_MS	KPD_DELAY
-	in		w,PIND
-	and		w,mask
-	tst		w
+	in		w,KPDI		; in PIND
+	and		w,mask		; we are masking the selected row
+	tst		w			; testing if column is pressed (test for 0 or minus)
 	brne	col2
-	_LDI	col, 0x03
+	_LDI	wr0,0x00
+	INVP	PORTB,7		; LED inverts if key pressed!
 	rjmp	isr_return
-	
+
 col2:
 	WAIT_MS	KPD_DELAY
-	OUTI	PORTD, 0xbf	; check column 7
+	OUTI	KPDO,0b10111111	; check column 2
 	WAIT_MS	KPD_DELAY
-	in		w,PIND
-	and		w,mask
-	tst		w
+	in		w,KPDI		; in PIND
+	and		w,mask		
+	tst		w			; testing if column is pressed (test for 0 or minus)
 	brne	col1
-	_LDI	col, 0x02
+	_LDI	wr0,0x04
+	INVP	PORTB,6		; LED inverts if key pressed!
 	rjmp	isr_return
 
 col1:
 	WAIT_MS	KPD_DELAY
-	OUTI	PORTD, 0xdf	; check column 7
+	OUTI	KPDO,0b11011111	; check column 1
 	WAIT_MS	KPD_DELAY
-	in		w,PIND
-	and		w,mask
-	tst		w
+	in		w,KPDI		; in PIND
+	and		w,mask		
+	tst		w			; testing if column is pressed (test for 0 or minus)
 	brne	col0
-	_LDI	col, 0x01
+	_LDI	wr0,0x08
+	INVP	PORTB,5		; LED inverts if key pressed!
 	rjmp	isr_return
 
 col0:
 	WAIT_MS	KPD_DELAY
-	OUTI	PORTD, 0xef	; check column 7
+	OUTI	KPDO,0b11101111	; check column 0
 	WAIT_MS	KPD_DELAY
-	in		w,PIND
-	and		w,mask
-	tst		w
-	brne	err_row0
-	_LDI	col, 0x00
+	in		w,KPDI		; in PIND
+	and		w,mask		
+	tst		w			; testing if column is pressed (test for 0 or minus)
+	brne	isr_return
+	_LDI	wr0,0x0C
+	INVP	PORTB,4		; LED inverts if key pressed!
 	rjmp	isr_return
-
-; TO BE COMPLETED AT THIS LOCATION
-	
-err_row0:			; debug purpose and filter residual glitches		
-	;INVP	PORTB,0
-	_LDI	col, 0x07
-	rjmp	isr_return
-	; no reti (grouped in isr_return)
 
 isr_return:
-	;INVP	PORTB,0		; visual feedback of key pressed acknowledge
-	ldi		_w,10		; sound feedback of key pressed acknowledge
-	_LDI	sem,0xff
+	OUTI KPDO, 0x0f
+	add kpbut, wr0
+	add kpbut, wr1
 	reti
-	
-.include "lcd.asm"			; include UART routines
-.include "printf.asm"		; include formatted printing routines
 
-; === initialization and configuration ===
+.include "lcd.asm"			; include UART routines
+.include "sound.asm"
+.include "printf.asm"
+
 
 .org 0x400
 
-reset:	LDSP	RAMEND		; Load Stack Pointer (SP)
+reset:	
+	LDSP	RAMEND		; Load Stack Pointer (SP)
 	rcall	LCD_init		; initialize UART
 
-	OUTI	DDRD,0xf0		; bit0-3 pull-up and bits4-7 driven low
-	OUTI	PORTD,0x0f		;>(needs the two lines)
+	OUTI	KPDD,0xf0		; bit0-3 pull-up and bits4-7 driven low
+	OUTI	KPDO,0x0f		;>(needs the two lines)
 	OUTI	DDRB,0xff		; turn on LEDs
 	OUTI	EIMSK,0x0f		; enable INT0-INT3
 	OUTI	EICRB,0b0		;>at low level
 	sbi		DDRE,SPEAKER	; enable sound
 
-	PRINTF LCD
-.db	CR,CR,"hello world"
-
-	clr		row
-	clr		col
-	clr		sem
+	clr		wr0
+	clr		wr1
+	clr		wr2
 
 	clr		a1				
 	clr		a2
@@ -151,27 +139,31 @@ reset:	LDSP	RAMEND		; Load Stack Pointer (SP)
 	clr		b3
 
 	sei
-	;jmp	main				; not useful in this case, kept for modularity
 
-	; === main program ===
+	jmp main
+
 main:
+	clr a0
+	add a0, wr1
+	add a0, wr0
 
-	tst		sem				; check flag/semaphore
-	breq	main
-	clr		sem	
+	ldi zl, low(2*krow0)	; load table of row 0
+	ldi zh, low(2*krow0) 
+	add zl, a0
+	adc zh, a1
+	lpm
+	mov b0, r0
+	
 
-	clr		a0
-	add		a0, row
-	clr		b0
-	add		b0, col
-	; TO BE COMPLETED AT THIS LOCATION		; decoding ascii
-	
-	
 PRINTF LCD
-.db	CR,LF,"row=",FHEX,a," col=",FHEX,b
-.db	0
-	rjmp	main
-	
+.db CR,LF, "KPD=", FHEX, a, " ascii=", FHEX, b
+.db 0
+	rjmp main
+
+
 ; code conversion table, character set #1 key to ASCII	
-KeySet01:
-.db "123A456B789C*0#D"
+krow0:
+.db 0x41,0x42,0x43,0x44		;col 0: A,B,C,D
+.db 0x33,0x36,0x39,0x23		;col 1: 3,6,9,#
+.db 0x32,0x35,0x38,0x30		;col 2: 2,5,8,0
+.db 0x31,0x34,0x37,0x2a		;col 3: 1,4,7,*

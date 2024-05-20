@@ -122,13 +122,20 @@ reset:
 	.db     0
 	WAIT_MS 3000
 	rcall   LCD_clear
+	rcall	LCD_home
 	sei
 	jmp main
 
 main:
-	clr	a0
-	add	a0, row
-	add	a0, col
+	rcall	decode
+
+	PRINTF	LCD
+	.db CR, "number to guess: ", FCHAR, b
+	.db 0
+
+	rjmp	main
+
+decode:
 	ldi	zl, low(2*lookup0)	; load table of row 0
 	ldi	zh, high(2*lookup0)
 	add	zl, col
@@ -138,13 +145,9 @@ main:
 	lpm
 	clr	b0
 	mov	b0, r0
-	PRINTF	LCD
-	.db CR, "guess: ", FCHAR, b
-	.db 0
-	rcall   LCD_blink_on
-	rjmp	main
+	ret
 
 
 ; ——— lookup table ———
 lookup0:
-.db "123A456B789C*0#D"
+.db " 123A456B789C*0#D"

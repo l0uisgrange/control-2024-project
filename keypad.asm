@@ -58,14 +58,14 @@ isr_ext_int3:
 	rjmp	column_detect
 
 column_detect:
-	OUTI	DDRD, 0xff
-	;OUTI	PORTD, 0xff
+	OUTI	PORTD, 0xff
 	
 col3:
 	WAIT_MS	KPD_DELAY
 	OUTI	PORTD, 0x7f	; check column 7
 	WAIT_MS	KPD_DELAY
 	in		w,PIND
+	out		PORTB, PIND
 	and		w,mask
 	tst		w
 	brne	col2
@@ -107,14 +107,14 @@ col0:
 
 ; TO BE COMPLETED AT THIS LOCATION
 	
-	err_row0:			; debug purpose and filter residual glitches		
+err_row0:			; debug purpose and filter residual glitches		
 	;INVP	PORTB,0
 	_LDI	col, 0x07
 	rjmp	isr_return
 	; no reti (grouped in isr_return)
 
 isr_return:
-	INVP	PORTB,0		; visual feedback of key pressed acknowledge
+	;INVP	PORTB,0		; visual feedback of key pressed acknowledge
 	ldi		_w,10		; sound feedback of key pressed acknowledge
 	_LDI	sem,0xff
 	reti

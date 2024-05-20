@@ -142,27 +142,24 @@ reset:
 main:
 	clr a0
 	add a0, row
-	;add a0, col
-	clr b0
-	add b0, col
+	add a0, col
 
 	ldi zl, low(2*krow0)	; load table of row 0
-	ldi zh, low(2*krow0) 
-	add zl, a0
-	adc zh, a1
+	ldi zh, low(2*krow0)
+	add	zl, col
+	mov	w, row
+	MUL4	w
+	add zl, w
 	lpm
-	;mov b0, r0
+	mov b0, r0
 	
 
 PRINTF LCD
-.db CR,LF, "KPD=", FHEX, a, " ascii=", FHEX, b
+.db CR,LF, "rc=", FHEX, a, " ASCII=", FHEX, b
 .db 0
 	rjmp main
 
 
 ; code conversion table, character set #1 key to ASCII	
 krow0:
-.db 0x41,0x42,0x43,0x44		;col 0: A,B,C,D
-.db 0x33,0x36,0x39,0x23		;col 1: 3,6,9,#
-.db 0x32,0x35,0x38,0x30		;col 2: 2,5,8,0
-.db 0x31,0x34,0x37,0x2a		;col 3: 1,4,7,*
+.db "123A456B789C*0#D"

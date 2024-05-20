@@ -19,8 +19,8 @@
 
 .equ	KPD_DELAY = 30	; msec, debouncing keys of keypad
 
-.def	wr0 = r2		; detected row in hex
-.def	wr1 = r1		; detected column in hex
+.def	row = r2		; detected row in hex
+.def	col = r1		; detected column in hex
 .def	mask = r14		; row mask indicating which row has been detected in bin
 .def	wr2 = r15		; semaphore: must enter LCD display routine, unary: 0 or other
 
@@ -29,21 +29,29 @@
 	jmp reset
 	jmp	isr_ext_int0	; external interrupt INT0
 	jmp	isr_ext_int1	; external interrupt INT1
+	jmp	isr_ext_int2	; external interrupt INT2
+	jmp	isr_ext_int3	; external interrupt INT3
 
 
 ; TO BE COMPLETED AT THIS LOCATION
 
 	; === interrupt service routines ===
 isr_ext_int0:
-	;INVP	PORTB,0			;;debug
-	_LDI	wr1, 0x00		; detect row 1
-	_LDI	mask, 0b00000001
+	;INVP	PORTB,0			
+	_LDI	row, 0x00		; detect row 1
 	rjmp	column_detect
-	; no reti (grouped in isr_return)
 
 isr_ext_int1:
+	_LDI	row, 0x01
+	rjmp	column_detect
 
-; TO BE COMPLETED AT THIS LOCATION
+isr_ext_int2:
+	_LDI	row, 0x02
+	rjmp	column_detect
+
+isr_ext_int3:
+	_LDI	row, 0x03
+	rjmp	column_detect
 
 column_detect:
 
@@ -56,11 +64,12 @@ col7:
 	and		w,mask
 	tst		w
 	brne	col6
-	_LDI	wr0,0x00
+	_LDI	col,0x00
 	;INVP	PORTB,7		;;debug
 	rjmp	isr_return
 	
 col6:
+	rjmp	isr_return
 
 ; TO BE COMPLETED AT THIS LOCATION
 	
@@ -99,8 +108,8 @@ reset:	LDSP	RAMEND		; Load Stack Pointer (SP)
 	PRINTF LCD
 .db	CR,CR,"hello world"
 
-	clr		wr0
-	clr		wr1
+	clr		row
+	clr		col
 	clr		wr2
 
 	clr		a1				
@@ -121,8 +130,7 @@ main:
 	clr		wr2	
 
 	clr		a0
-	add		a0, wr1
-	add		a0, wr0
+	add		a0, row
 
 	; TO BE COMPLETED AT THIS LOCATION		; decoding ascii
 	

@@ -114,9 +114,6 @@ reset:
 	.db     0
 	WAIT_MS 3000
 	rcall   LCD_clear
-	PRINTF  LCD
-	.db	CR, "Number to guess:",LF
-	.db     0
 	rcall   LCD_blink_on
 	clr	col
 	clr	row
@@ -144,7 +141,7 @@ main:
 	clr	b0
 	mov	b0, r0
 	PRINTF	LCD
-	.db CR, "number: ", FCHAR, b
+	.db CR, "guess: ", FCHAR, b
 	.db 0
 	rjmp	main
 

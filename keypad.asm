@@ -60,40 +60,40 @@ isr_ext_int3:
 column_detect:
 	OUTI	PORTD, 0xff
 	
-col0:
+col3:
 	WAIT_MS	KPD_DELAY
 	OUTI	PORTD, 0x7f	; check column 7
 	WAIT_MS	KPD_DELAY
 	in		w,PIND
 	and		w,mask
 	tst		w
-	brne	col1
-	_LDI	col, 0x00
+	brne	col2
+	_LDI	col, 0x03
 	rjmp	isr_return
 	
-col1:
+col2:
 	WAIT_MS	KPD_DELAY
 	OUTI	PORTD, 0xbf	; check column 7
 	WAIT_MS	KPD_DELAY
 	in		w,PIND
 	and		w,mask
 	tst		w
-	brne	col2
-	_LDI	col, 0x01
+	brne	col1
+	_LDI	col, 0x02
 	rjmp	isr_return
 
-col2:
+col1:
 	WAIT_MS	KPD_DELAY
 	OUTI	PORTD, 0xdf	; check column 7
 	WAIT_MS	KPD_DELAY
 	in		w,PIND
 	and		w,mask
 	tst		w
-	brne	col3
-	_LDI	col, 0x02
+	brne	col0
+	_LDI	col, 0x01
 	rjmp	isr_return
 
-col3:
+col0:
 	WAIT_MS	KPD_DELAY
 	OUTI	PORTD, 0xef	; check column 7
 	WAIT_MS	KPD_DELAY
@@ -101,7 +101,7 @@ col3:
 	and		w,mask
 	tst		w
 	brne	err_row0
-	_LDI	col, 0x03
+	_LDI	col, 0x00
 	rjmp	isr_return
 
 ; TO BE COMPLETED AT THIS LOCATION
@@ -128,7 +128,7 @@ isr_return:
 reset:	LDSP	RAMEND		; Load Stack Pointer (SP)
 	rcall	LCD_init		; initialize UART
 
-	OUTI	DDRD,0xf0		; bit0-3 pull-up and bits4-7 driven low
+	OUTI	DDRD,0xff		; bit0-3 pull-up and bits4-7 driven low
 	OUTI	PORTD,0x0f		;>(needs the two lines)
 	OUTI	DDRB,0xff		; turn on LEDs
 	OUTI	EIMSK,0x0f		; enable INT0-INT3

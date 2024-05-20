@@ -62,10 +62,10 @@ column_detect:
 	
 col3:
 	WAIT_MS	KPD_DELAY
-	OUTI	PORTD, 0x7f	; check column 7
+	OUTI	PORTD, 0xf7	; check column 7
 	WAIT_MS	KPD_DELAY
 	in		w,PIND
-	out		PORTB, PIND
+	OUTI	PORTB, PIND
 	and		w,mask
 	tst		w
 	brne	col2
@@ -74,7 +74,7 @@ col3:
 	
 col2:
 	WAIT_MS	KPD_DELAY
-	OUTI	PORTD, 0xbf	; check column 7
+	OUTI	PORTD, 0xfb	; check column 7
 	WAIT_MS	KPD_DELAY
 	in		w,PIND
 	and		w,mask
@@ -85,7 +85,7 @@ col2:
 
 col1:
 	WAIT_MS	KPD_DELAY
-	OUTI	PORTD, 0xdf	; check column 7
+	OUTI	PORTD, 0xfd	; check column 7
 	WAIT_MS	KPD_DELAY
 	in		w,PIND
 	and		w,mask
@@ -96,7 +96,7 @@ col1:
 
 col0:
 	WAIT_MS	KPD_DELAY
-	OUTI	PORTD, 0xef	; check column 7
+	OUTI	PORTD, 0xfe	; check column 7
 	WAIT_MS	KPD_DELAY
 	in		w,PIND
 	and		w,mask
@@ -164,7 +164,6 @@ main:
 	add		a0, row
 	clr		b0
 	add		b0, col
-
 	; TO BE COMPLETED AT THIS LOCATION		; decoding ascii
 	
 	

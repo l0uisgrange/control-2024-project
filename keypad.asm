@@ -58,7 +58,8 @@ isr_ext_int3:
 	rjmp	column_detect
 
 column_detect:
-	OUTI	PORTD, 0xff
+	OUTI	DDRD, 0xff
+	;OUTI	PORTD, 0xff
 	
 col3:
 	WAIT_MS	KPD_DELAY
@@ -128,7 +129,7 @@ isr_return:
 reset:	LDSP	RAMEND		; Load Stack Pointer (SP)
 	rcall	LCD_init		; initialize UART
 
-	OUTI	DDRD,0xff		; bit0-3 pull-up and bits4-7 driven low
+	OUTI	DDRD,0xf0		; bit0-3 pull-up and bits4-7 driven low
 	OUTI	PORTD,0x0f		;>(needs the two lines)
 	OUTI	DDRB,0xff		; turn on LEDs
 	OUTI	EIMSK,0x0f		; enable INT0-INT3

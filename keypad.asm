@@ -131,22 +131,22 @@ reset:
 	jmp main
 
 main:
-	clr a0
-	add a0, row
-	add a0, col
-	ldi zl, low(2*lookup0)	; load table of row 0
-	ldi zh, high(2*lookup0)
+	clr	a0
+	add	a0, row
+	add	a0, col
+	ldi	zl, low(2*lookup0)	; load table of row 0
+	ldi	zh, high(2*lookup0)
 	add	zl, col
 	mov	w, row
 	MUL4	w
-	add zl, w
+	add	zl, w
 	lpm
 	clr	b0
-	mov b0, r0
-	PRINTF LCD
+	mov	b0, r0
+	PRINTF	LCD
 	.db CR, "number: ", FCHAR, b
 	.db 0
-	rjmp main
+	rjmp	main
 
 
 ; ——— lookup table ———

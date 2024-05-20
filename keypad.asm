@@ -63,7 +63,7 @@ col3:
 	and		w,mask		; we are masking the selected row
 	tst		w			; testing if column is pressed (test for 0 or minus)
 	brne	col2
-	_LDI	col,0x00
+	_LDI	col,0x03
 	INVP	PORTB,7		; LED inverts if key pressed!
 	rjmp	isr_return
 
@@ -75,7 +75,7 @@ col2:
 	and		w,mask		
 	tst		w			; testing if column is pressed (test for 0 or minus)
 	brne	col1
-	_LDI	col,0x04
+	_LDI	col,0x02
 	INVP	PORTB,6		; LED inverts if key pressed!
 	rjmp	isr_return
 
@@ -87,7 +87,7 @@ col1:
 	and		w,mask		
 	tst		w			; testing if column is pressed (test for 0 or minus)
 	brne	col0
-	_LDI	col,0x08
+	_LDI	col,0x01
 	INVP	PORTB,5		; LED inverts if key pressed!
 	rjmp	isr_return
 
@@ -99,18 +99,15 @@ col0:
 	and		w,mask		
 	tst		w			; testing if column is pressed (test for 0 or minus)
 	brne	isr_return
-	_LDI	col,0x0C
+	_LDI	col,0x00
 	INVP	PORTB,4		; LED inverts if key pressed!
 	rjmp	isr_return
 
 isr_return:
 	OUTI PORTD, 0x0f
-	add kpbut, col
-	add kpbut, row
 	reti
 
 .include "lcd.asm"			; include UART routines
-.include "sound.asm"
 .include "printf.asm"
 
 
@@ -146,6 +143,7 @@ main:
 	clr a0
 	add a0, row
 	;add a0, col
+	clr b0
 	add b0, col
 
 	ldi zl, low(2*krow0)	; load table of row 0

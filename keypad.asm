@@ -108,12 +108,6 @@ reset:
 	OUTI	DDRB, 0xff		; turn on LEDs
 	OUTI	EIMSK, 0x0f		; enable INT0-INT3
 	OUTI	EICRB, 0b0		;>at low level
-	PRINTF  LCD
-	.db	CR, "Welcome to", CR, LF, "Mastermind"
-	.db     0
-	WAIT_MS 3000
-	rcall   LCD_clear
-	rcall   LCD_blink_on
 	clr	col
 	clr	row
 	clr	sem
@@ -123,6 +117,11 @@ reset:
 	clr	b1
 	clr	b2
 	clr	b3
+	PRINTF  LCD
+	.db	CR, "Welcome to", CR, LF, "Mastermind"
+	.db     0
+	WAIT_MS 3000
+	rcall   LCD_clear
 	sei
 	jmp main
 
@@ -142,6 +141,7 @@ main:
 	PRINTF	LCD
 	.db CR, "guess: ", FCHAR, b
 	.db 0
+	rcall   LCD_blink_on
 	rjmp	main
 
 

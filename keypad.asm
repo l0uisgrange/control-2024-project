@@ -62,6 +62,7 @@ column_detect:
 	
 col3:
 	WAIT_MS	KPD_DELAY
+	OUTI	DDRD, 0xff
 	OUTI	PORTD, 0x7f	; check column 7
 	WAIT_MS	KPD_DELAY
 	in		w,PIND

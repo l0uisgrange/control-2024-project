@@ -111,9 +111,11 @@ reset:
 	clr	col
 	clr	row
 	clr	sem
+	clr	a0
 	clr	a1				
 	clr	a2
 	clr	a3
+	clr	b0
 	clr	b1
 	clr	b2
 	clr	b3
@@ -126,16 +128,13 @@ reset:
 	sei
 	jmp main
 
-main:
-	rcall	decode
 
-	PRINTF	LCD
-	.db CR, "number to guess: ", FCHAR, b
-	.db 0
+; ——— lookup table ———
+lookup0:
+.db " 123A456B789C*0#D"
 
-	rjmp	main
 
-decode:
+.macro	DECODE
 	ldi	zl, low(2*lookup0)	; load table of row 0
 	ldi	zh, high(2*lookup0)
 	add	zl, col
@@ -143,11 +142,34 @@ decode:
 	MUL4	w
 	add	zl, w
 	lpm
-	clr	b0
-	mov	b0, r0
-	ret
+	clr	@0
+	mov	@0, r0
+	clr	row
+	clr	col
+.endmacro
 
-
-; ——— lookup table ———
-lookup0:
-.db " 123A456B789C*0#D"
+main:
+	PRINTF	LCD
+	.db CR, "nbr to guess: "
+	.db 0
+setup:
+	DECODE	b0
+	cpi	b0, 0x20
+	breq	setup
+	PRINTF	LCD
+	.db CR, "nbr to guess: ", FCHAR, b	; final look at value to guess
+	.db 0
+	WAIT_MS	3000
+	; --- Guessing ---
+	PRINTF	LCD
+	.db CR, "guess: "
+	.db 0
+guess:
+	DECODE	a0
+	cpi	a0, 0x20
+	breq	guess
+	PRINTF	LCD
+	.db CR, "guess: ", FCHAR, a
+	.db 0
+done:
+	rjmp	done

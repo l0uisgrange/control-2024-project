@@ -39,19 +39,22 @@
 isr_ext_int0:
 	;INVP	PORTB,0			
 	_LDI	row, 0x00		
-	_LDI	mask, 0b00000001
+	_LDI	mask, 0x01
 	rjmp	column_detect
 
 isr_ext_int1:
 	_LDI	row, 0x01
+	_LDI	mask, 0x02
 	rjmp	column_detect
 
 isr_ext_int2:
 	_LDI	row, 0x02
+	_LDI	mask, 0x04
 	rjmp	column_detect
 
 isr_ext_int3:
 	_LDI	row, 0x03
+	_LDI	mask, 0x08
 	rjmp	column_detect
 
 column_detect:
@@ -70,38 +73,35 @@ col0:
 	
 col1:
 	WAIT_MS	KPD_DELAY
-	;OUTI	PORTD,0xbf	; check column 0
+	OUTI	PORTD, 0xbf	; check column 7
 	WAIT_MS	KPD_DELAY
 	in		w,PIND
-	eor		w,mask
+	and		w,mask
 	tst		w
-	breq	col2
+	brne	col2
 	_LDI	col, 0x01
-	;INVP	PORTB,7		;;debug
 	rjmp	isr_return
 
 col2:
 	WAIT_MS	KPD_DELAY
-	;OUTI	PORTD,0xDf	; check column 0
+	OUTI	PORTD, 0xdf	; check column 7
 	WAIT_MS	KPD_DELAY
 	in		w,PIND
-	eor		w,mask
+	and		w,mask
 	tst		w
-	breq	col3
+	brne	col3
 	_LDI	col, 0x02
-	;INVP	PORTB,7		;;debug
 	rjmp	isr_return
 
 col3:
 	WAIT_MS	KPD_DELAY
-	;OUTI	PORTD,0xef	; check column 0
+	OUTI	PORTD, 0xef	; check column 7
 	WAIT_MS	KPD_DELAY
 	in		w,PIND
-	eor		w,mask
+	and		w,mask
 	tst		w
-	breq	err_row0
+	brne	err_row0
 	_LDI	col, 0x03
-	;INVP	PORTB,7		;;debug
 	rjmp	isr_return
 
 ; TO BE COMPLETED AT THIS LOCATION

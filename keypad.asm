@@ -158,6 +158,8 @@ setup:
 	add	w, col
 	MUL4	row
 	add	w, row
+	clr	row
+	clr	col
 	LOOKUP	b0, w, lookup0
 	cpi	b0, 0x20
 	breq	setup
@@ -179,6 +181,8 @@ guess:
 	add	w, col
 	MUL4	row
 	add	w, row
+	clr	row
+	clr	col
 	LOOKUP	a0, w, lookup0
 	cpi	a0, 0x20
 	breq	guess

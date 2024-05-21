@@ -80,3 +80,5 @@ wait2us:nop
 .equ	la3	= la/4
 .equ	lam3	= lam/4
 .equ	si3	= si/4	
+
+.equ	do4 = do/8

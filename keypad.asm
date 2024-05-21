@@ -230,9 +230,6 @@ end:
 	rjmp	done	
 
 mario:
-.db	so, do2, mi2, so2, do3, mi3, so3, so3, so3, mi, 
-.db som, do2, rem2, som2, do3, fam3, som3, som3, som3, rem2, mi
-.db	lam, re2, fa2, lam2, re3, fa3, lam3, lam3, lam3, si3, si3, si3 
-
-
-0xff
+.db	so, do2, mi2, so2, do3, mi3, so3, so3, so3, 0
+.db som, do2, rem2, som2, do3, fam3, som3, som3, som3, rem2, 0
+.db	lam, re2, fa2, lam2, re3, fa3, lam3, lam3, lam3, lam3, 0, lam3, 0, lam3, do4, do4, do4, do4, do4, do4, do4, do4, do4, do4, do4, do4  0xff

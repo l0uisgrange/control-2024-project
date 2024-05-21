@@ -144,6 +144,8 @@ lookup0:
 	add	zl, w
 	lpm
 	mov	@0, r0
+	_LDI	row, 0
+	_LDI	col, 0	
 .endmacro
 
 main:
@@ -162,7 +164,6 @@ main:
 	WAIT_MS	2000
 	rcall	LCD_clear
 	rcall	LCD_home
-	CLR2	row, col
 guess:
 	; --- guess ---
 	PRINTF	LCD
@@ -178,5 +179,8 @@ guess:
 	.db 0
 done:
 	WAIT_MS	2000
-	CLR4	a0, b0, row, col
+	clr	a0
+	clr	b0
+	_LDI	col, 0
+	_LDI	row, 0
 	rjmp	main

@@ -148,14 +148,13 @@ lookup0:
 
 main:
 	; --- setup ---
-	rcall	LCD_blink_on
 	PRINTF	LCD
-	.db CR, "Char to guess", LF
+	.db CR, "Char to guess"
 	.db 0
-setup:
+	rcall	LCD_blink_on
 	DECODE	b0
 	cpi	b0, 0x20	; compare b0 to space char
-	breq	setup
+	breq	main
 	rcall	LCD_clear
 	rcall	LCD_home
 	rcall	LCD_blink_off
@@ -166,13 +165,12 @@ setup:
 	rcall	LCD_clear
 	rcall	LCD_home
 	CLR2	row, col
-b4guess:
-	; --- guess display ---
-	rcall	LCD_blink_on
-	PRINTF	LCD
-	.db CR, "Guess the char", LF
-	.db 0
 guess:
+	; --- guess ---
+	PRINTF	LCD
+	.db CR, "Guess the char"
+	.db 0
+	rcall	LCD_blink_on
 	DECODE	a0
 	cpi	a0, 0x20	; compare a0 to space char
 	breq	guess
@@ -196,7 +194,7 @@ fail:
 	rcall	LCD_clear
 	rcall	LCD_home
 	CLR3	a0, row, col
-	rjmp	b4guess
+	rjmp	guess
 success:
 	PRINTF	LCD
 	.db CR, "Correct !", LF, "Well done."

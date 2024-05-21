@@ -206,7 +206,7 @@ success:
 	PRINTF	LCD
 	.db CR, "Correct !", LF, "Well done."
 	.db 0
-	rjmp	victory
+	rcall	victory
 	WAIT_MS	1000
 done:
 	CLR4	a0, b0, row, col
@@ -217,7 +217,10 @@ done:
 victory:
 	ldi		zl, low(2*win)
 	ldi		zh, high(2*win)
-	rjmp	play
+	rjmp 	play
+loss:
+	ldi		zl, low(2*death)
+	ldi		zh, high(2*death)
 play:
 	lpm
 	adiw	zl, 1
@@ -229,12 +232,7 @@ play:
 	rjmp	play
 end:
 	rcall	sound_off
-	rjmp	done	
-
-loss:
-	ldi		zl, low(2*death)
-	ldi		zh, high(2*death)
-	ret
+	ret	
 
 win:
 .db	so, do2, mi2, so2, do3, mi3, so3, so3, so3, mi3, mi3, 0

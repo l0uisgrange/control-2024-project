@@ -222,10 +222,11 @@ play:
 	tst	r0
 	breq	end
 	mov		c0, r0
-	_LDI	d0 ,100
+	_LDI	d0, 50
 	rcall	sound
 	rjmp	play
 end:
+	rcall	sound_off
 	rjmp	done	
 
 mario:

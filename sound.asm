@@ -23,7 +23,7 @@ sound1:
 	ret
 
 sound_off:
-	ldi	c0,1
+	_LDI	c0,1
 	rcall	wait9us
 	sub	d0,c0		; decrement duration low  byte
 	sbc	d1,c1		; decrement duration high byte

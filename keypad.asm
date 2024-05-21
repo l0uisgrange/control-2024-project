@@ -192,4 +192,7 @@ guess:
 	.db CR, "guess: ", FCHAR, a
 	.db 0
 done:
-	rjmp	done
+	WAIT_MS	2000
+	clr	b0
+	clr	a0
+	rjmp	main

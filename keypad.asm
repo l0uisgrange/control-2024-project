@@ -149,7 +149,7 @@ lookup0:
 main:
 	; --- setup ---
 	PRINTF	LCD
-	.db CR, "Number to guess", LF
+	.db CR, "Char to guess", LF
 	.db 0
 	rcall	LCD_blink_on
 	DECODE	b0
@@ -159,7 +159,7 @@ main:
 	rcall	LCD_home
 	rcall	LCD_blink_off
 	PRINTF	LCD
-	.db CR, "Number to guess", LF, FCHAR, b
+	.db CR, "Char to guess", LF, FCHAR, b
 	.db 0
 	WAIT_MS	2000
 	rcall	LCD_clear
@@ -168,7 +168,7 @@ main:
 guess:
 	; --- guess ---
 	PRINTF	LCD
-	.db CR, "Guess the number", LF
+	.db CR, "Guess the char", LF
 	.db 0
 	rcall	LCD_blink_on
 	DECODE	a0
@@ -178,7 +178,7 @@ guess:
 	rcall	LCD_home
 	rcall	LCD_blink_off
 	PRINTF	LCD
-	.db CR, "Guess the number", LF, FCHAR, a
+	.db CR, "Guess the char", LF, FCHAR, a
 	.db 0
 	WAIT_MS	1000
 check:

@@ -108,6 +108,7 @@ reset:
 	OUTI	DDRB, 0xff		; turn on LEDs
 	OUTI	EIMSK, 0x0f		; enable INT0-INT3
 	OUTI	EICRB, 0b0		;>at low level
+	OUTI	DDRE, 0xff
 	clr	col
 	clr	row
 	clr	sem
@@ -195,9 +196,28 @@ success:
 	PRINTF	LCD
 	.db CR, "Correct !", LF, "Well done."
 	.db 0
+	rjmp	theme
 	WAIT_MS	1000
 	rcall	LCD_clear
 	rcall	LCD_home
 done:
 	CLR4	a0, b0, row, col
 	rjmp	main
+
+theme:
+	ldi		zl, low(2*mario)
+	ldi		zh, high(2*mario)
+play:
+	lpm
+	adiw	zl, 1
+	test	r0
+	breq	end
+	mov		c0, r0
+	_LDI	d0 ,100
+	rcall	sound
+	rjmp	play
+end:
+	rjmp	done	
+
+mario:
+.db	so, do2, mi2, so2, do3, mi3, so3, so3, so3, mi, som, do2, rem2, som2, do3, fam3, som3, rem2

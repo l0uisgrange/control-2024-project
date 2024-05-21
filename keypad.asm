@@ -162,8 +162,7 @@ main:
 	WAIT_MS	2000
 	rcall	LCD_clear
 	rcall	LCD_home
-	clr 	row
-	clr	col
+	CLR2	row, col
 guess:
 	; --- guess ---
 	PRINTF	LCD
@@ -179,6 +178,5 @@ guess:
 	.db 0
 done:
 	WAIT_MS	2000
-	clr	a0
-	clr	b0
+	CLR4	a0, b0, row, col
 	rjmp	main

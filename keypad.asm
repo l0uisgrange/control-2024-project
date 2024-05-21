@@ -147,7 +147,7 @@ lookup0:
 .endmacro
 
 main:
-	; --- init ---
+	; --- setup ---
 	PRINTF	LCD
 	.db CR, "nbr to guess: "
 	.db 0
@@ -159,7 +159,22 @@ main:
 	PRINTF	LCD
 	.db CR, "nbr to guess: ", FCHAR, b
 	.db 0
-
+	WAIT_MS	2000
+	rcall	LCD_clear
+	rcall	LCD_home
+guess:
+	; --- guess ---
+	PRINTF	LCD
+	.db CR, "guess a nbr: "
+	.db 0
+	DECODE a0
+	cpi	a0, 0x20	; compare a0 to space char
+	breq	guess
+	rcall	LCD_clear
+	rcall	LCD_home
+	PRINTF	LCD
+	.db CR, "guess a nbr: ", FCHAR, a
+	.db 0
 done:
 	WAIT_MS	2000
 	clr	a0

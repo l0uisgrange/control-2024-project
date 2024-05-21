@@ -150,7 +150,7 @@ main:
 	; --- setup ---
 	rcall	LCD_blink_on
 	PRINTF	LCD
-	.db CR, "Char to guess"
+	.db CR, "Char to guess", LF
 	.db 0
 setup:
 	DECODE	b0
@@ -166,10 +166,11 @@ setup:
 	rcall	LCD_clear
 	rcall	LCD_home
 	CLR2	row, col
+b4guess:
 	; --- guess display ---
 	rcall	LCD_blink_on
 	PRINTF	LCD
-	.db CR, "Guess the char", LF, ""
+	.db CR, "Guess the char", LF
 	.db 0
 guess:
 	DECODE	a0
@@ -195,7 +196,7 @@ fail:
 	rcall	LCD_clear
 	rcall	LCD_home
 	CLR3	a0, row, col
-	rjmp	guess
+	rjmp	b4guess
 success:
 	PRINTF	LCD
 	.db CR, "Correct !", LF, "Well done."

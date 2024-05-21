@@ -121,6 +121,14 @@ reset:
 	clr	b1
 	clr	b2
 	clr	b3
+	clr	c0
+	clr	c1
+	clr	c2
+	clr	c3
+	clr	d0
+	clr	d1
+	clr	d2
+	clr	d3
 	PRINTF  LCD
 	.db	CR, "Welcome to", CR, LF, "Mastermind"
 	.db     0

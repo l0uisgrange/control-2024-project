@@ -5,28 +5,28 @@ sound:
 ; in	a0	period of oscillation (in 10us)
 ; 	b0	duration of sound (in 2.5ms)
 
-	mov	b1,b0		; duration high byte = b
-	clr	b0		; duration  low byte = 0
-	clr	a1		; period high byte = a
-	tst	a0
+	mov	d1,d0		; duration high byte = b
+	clr	d0		; duration  low byte = 0
+	clr	c1		; period high byte = a
+	tst	c0
 	breq	sound_off	; if a0=0 then no sound	
 sound1:
-	mov	w,a0		
+	mov	w,c0		
 	rcall	wait9us		; 9us
 	nop			; 0.25us
 	dec	w		; 0.25us
 	brne	PC-3		; 0.50us	total = 10us
 	INVP	PORTE,SPEAKER	; invert piezo output
-	sub	b0,a0		; decrement duration low  byte
-	sbc	b1,a1		; decrement duration high byte
+	sub	d0,c0		; decrement duration low  byte
+	sbc	d1,c1		; decrement duration high byte
 	brcc	sound1		; continue if duration>0
 	ret
 
 sound_off:
-	ldi	a0,1
+	ldi	c0,1
 	rcall	wait9us
-	sub	b0,a0		; decrement duration low  byte
-	sbc	b1,a1		; decrement duration high byte
+	sub	d0,c0		; decrement duration low  byte
+	sbc	d1,c1		; decrement duration high byte
 	brcc	PC-3		; continue if duration>0
 	ret
 

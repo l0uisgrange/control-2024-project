@@ -187,6 +187,8 @@ fail:
 	.db CR, "Wrong guess !", LF, "Try again."
 	.db 0
 	WAIT_MS	1000
+	rcall	LCD_clear
+	rcall	LCD_home
 	CLR3	a0, row, col
 	rjmp	guess
 sucess:
@@ -194,6 +196,8 @@ sucess:
 	.db CR, "Correct !", LF, "Well done."
 	.db 0
 	WAIT_MS	1000
+	rcall	LCD_clear
+	rcall	LCD_home
 done:
 	CLR4	a0, b0, row, col
 	rjmp	main

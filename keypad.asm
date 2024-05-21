@@ -151,13 +151,11 @@ main:
 	PRINTF	LCD
 	.db CR, "Char to guess"
 	.db 0
-	rcall	LCD_blink_on
 	DECODE	b0
 	cpi	b0, 0x20	; compare b0 to space char
 	breq	main
 	rcall	LCD_clear
 	rcall	LCD_home
-	rcall	LCD_blink_off
 	PRINTF	LCD
 	.db CR, "Char to guess", LF, FCHAR, b
 	.db 0
@@ -170,13 +168,11 @@ guess:
 	PRINTF	LCD
 	.db CR, "Guess the char"
 	.db 0
-	rcall	LCD_blink_on
 	DECODE	a0
 	cpi	a0, 0x20	; compare a0 to space char
 	breq	guess
 	rcall	LCD_clear
 	rcall	LCD_home
-	rcall	LCD_blink_off
 	PRINTF	LCD
 	.db CR, "Guess the char", LF, FCHAR, a
 	.db 0

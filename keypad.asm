@@ -97,6 +97,7 @@ isr_return:
 
 .include "lcd.asm"			; include UART routines
 .include "printf.asm"
+.include "sound.asm"
 
 .org 0x400
 
@@ -210,7 +211,7 @@ theme:
 play:
 	lpm
 	adiw	zl, 1
-	test	r0
+	tst	r0
 	breq	end
 	mov		c0, r0
 	_LDI	d0 ,100

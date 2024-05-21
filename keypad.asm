@@ -137,11 +137,11 @@ lookup0:
 .macro	DECODE
 	ldi	zl, low(2*lookup0)	; load table of row 0
 	ldi	zh, high(2*lookup0)
-	add	zl, col
+	ADDZ	col
 	mov	w, row
 	lsl	w
 	lsl	w
-	add	zl, w
+	ADDZ	w
 	lpm
 	clr	@0
 	mov	@0, r0
@@ -154,7 +154,11 @@ main:
 	.db CR, "nbr to guess: "
 	.db 0
 setup:
-	DECODE	b0
+	clr	w
+	add	w, col
+	MUL4	row
+	add	w, row
+	LOOKUP	b0, w, lookup0
 	cpi	b0, 0x20
 	breq	setup
 	rcall	LCD_clear
@@ -171,7 +175,11 @@ setup:
 	.db 0
 	
 guess:
-	DECODE	a0
+	clr	w
+	add	w, col
+	MUL4	row
+	add	w, row
+	LOOKUP	a0, w, lookup0
 	cpi	a0, 0x20
 	breq	guess
 	rcall	LCD_clear

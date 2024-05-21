@@ -207,10 +207,10 @@ success:
 	.db 0
 	rjmp	theme
 	WAIT_MS	1000
-	rcall	LCD_clear
-	rcall	LCD_home
 done:
 	CLR4	a0, b0, row, col
+	rcall	LCD_clear
+	rcall	LCD_home
 	rjmp	main
 
 theme:
@@ -219,7 +219,7 @@ theme:
 play:
 	lpm
 	adiw	zl, 1
-	cpi		r0, 0x20
+	_CPI		r0, 0xff
 	breq	end
 	mov		c0, r0
 	_LDI	d0, 45
@@ -230,4 +230,4 @@ end:
 	rjmp	done	
 
 mario:
-.db	so, do2, mi2, so2, do3, mi3, so3, so3, so3, mi, som, do2, rem2, som2, do3, fam3, som3, rem2, " "
+.db	so, do2, mi2, so2, do3, mi3, so3, so3, so3, mi, som, do2, rem2, som2, do3, fam3, som3, rem2, 0xff

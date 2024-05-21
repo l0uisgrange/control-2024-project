@@ -93,6 +93,7 @@ col0:
 
 isr_return:
 	OUTI PORTD, 0x0f
+	ADDI	col, 1			; add 1 to skip space char in lookup table
 	reti
 
 .include "lcd.asm"			; include UART routines
@@ -148,8 +149,6 @@ lookup0:
 
 main:
 	; --- init ---
-	rcall	LCD_clear
-	rcall	LCD_home
 	PRINTF	LCD
 	.db CR, "nbr to guess: "
 	.db 0

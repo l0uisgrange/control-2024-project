@@ -196,6 +196,7 @@ fail:
 	PRINTF	LCD
 	.db CR, "Wrong guess !", LF, "Try again."
 	.db 0
+	rcall	loss
 	WAIT_MS	1000
 	rcall	LCD_clear
 	rcall	LCD_home
@@ -205,7 +206,7 @@ success:
 	PRINTF	LCD
 	.db CR, "Correct !", LF, "Well done."
 	.db 0
-	rjmp	theme
+	rjmp	victory
 	WAIT_MS	1000
 done:
 	CLR4	a0, b0, row, col
@@ -213,9 +214,10 @@ done:
 	rcall	LCD_home
 	rjmp	main
 
-theme:
-	ldi		zl, low(2*mario)
-	ldi		zh, high(2*mario)
+victory:
+	ldi		zl, low(2*win)
+	ldi		zh, high(2*win)
+	rjmp	play
 play:
 	lpm
 	adiw	zl, 1
@@ -229,7 +231,15 @@ end:
 	rcall	sound_off
 	rjmp	done	
 
-mario:
-.db	so, do2, mi2, so2, do3, mi3, so3, so3, so3, mi3, mi3, 0, 0
-.db som, do2, rem2, som2, do3, fam3, som3, som3, som3, rem2, rem2, 0, 0
+loss:
+	ldi		zl, low(2*death)
+	ldi		zh, high(2*death)
+	ret
+
+win:
+.db	so, do2, mi2, so2, do3, mi3, so3, so3, so3, mi3, mi3, 0
+.db som, do2, rem2, som2, do3, fam3, som3, som3, som3, rem2, rem2, 0
 .db	lam, re2, fa2, lam2, re3, fa3, lam3, lam3, lam3, lam3, 0, lam3, 0, lam3, do4, do4, do4, do4, do4, do4, do4, do4, 0xff
+
+death:
+.db	fa2, fa3, 0, fa3, 0, fa3, 0, fa3, 0, fa3, 0, do3, mi2, 0, mi2, do2, do2, 0xff

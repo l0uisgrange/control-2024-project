@@ -166,7 +166,7 @@ main:
 guess:
 	; --- guess ---
 	PRINTF	LCD
-	.db CR, "guess a nbr: ",
+	.db CR, "guess a nbr: "
 	.db 0
 	DECODE	a0
 	cpi	a0, 0x20	; compare a0 to space char

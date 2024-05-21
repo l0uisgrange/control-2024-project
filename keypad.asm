@@ -219,10 +219,10 @@ theme:
 play:
 	lpm
 	adiw	zl, 1
-	tst	r0
+	cp		zl, zh
 	breq	end
 	mov		c0, r0
-	_LDI	d0, 50
+	_LDI	d0, 45
 	rcall	sound
 	rjmp	play
 end:

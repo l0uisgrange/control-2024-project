@@ -162,12 +162,14 @@ main:
 	WAIT_MS	2000
 	rcall	LCD_clear
 	rcall	LCD_home
+	clr 	row
+	clr	col
 guess:
 	; --- guess ---
 	PRINTF	LCD
-	.db CR, "guess a nbr: "
+	.db CR, "guess a nbr: ", FCHAR, a
 	.db 0
-	DECODE a0
+	DECODE	a0
 	cpi	a0, 0x20	; compare a0 to space char
 	breq	guess
 	rcall	LCD_clear

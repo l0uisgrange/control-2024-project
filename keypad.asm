@@ -148,13 +148,14 @@ lookup0:
 
 main:
 	; --- setup ---
+	rcall	LCD_blink_on
 	PRINTF	LCD
 	.db CR, "Char to guess"
 	.db 0
-	rcall	LCD_blink_on
+setup:
 	DECODE	b0
 	cpi	b0, 0x20	; compare b0 to space char
-	breq	main
+	breq	setup
 	rcall	LCD_clear
 	rcall	LCD_home
 	rcall	LCD_blink_off
@@ -165,12 +166,12 @@ main:
 	rcall	LCD_clear
 	rcall	LCD_home
 	CLR2	row, col
-guess:
-	; --- guess ---
-	PRINTF	LCD
-	.db CR, "Guess the char"
-	.db 0
+	; --- guess display ---
 	rcall	LCD_blink_on
+	PRINTF	LCD
+	.db CR, "Guess the char", LF, ""
+	.db 0
+guess:
 	DECODE	a0
 	cpi	a0, 0x20	; compare a0 to space char
 	breq	guess

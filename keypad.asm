@@ -51,7 +51,7 @@ col3:
 	and	w, mask		; we are masking the selected row
 	tst	w			; testing if column is pressed (test for 0 or minus)
 	brne	col2
-	_LDI	col, 0x04
+	_LDI	col, 0x03
 	INVP	PORTB, 7		; LED inverts if key pressed!
 	rjmp	isr_return
 
@@ -63,7 +63,7 @@ col2:
 	and	w, mask		
 	tst	w			; testing if column is pressed (test for 0 or minus)
 	brne	col1
-	_LDI	col, 0x03
+	_LDI	col, 0x02
 	INVP	PORTB, 6		; LED inverts if key pressed!
 	rjmp	isr_return
 
@@ -75,7 +75,7 @@ col1:
 	and	w, mask		
 	tst	w			; testing if column is pressed (test for 0 or minus)
 	brne	col0
-	_LDI	col, 0x02
+	_LDI	col, 0x01
 	INVP	PORTB, 5		; LED inverts if key pressed!
 	rjmp	isr_return
 
@@ -87,7 +87,7 @@ col0:
 	and	w, mask		
 	tst	w			; testing if column is pressed (test for 0 or minus)
 	brne	isr_return
-	_LDI	col, 0x01
+	_LDI	col, 0x00
 	INVP	PORTB, 4		; LED inverts if key pressed!
 	rjmp	isr_return
 
@@ -131,54 +131,28 @@ reset:
 
 ; ——— lookup table ———
 lookup0:
-.db " 123A456B789C*0#D", 0
+.db "123A456B789C*0#D"
 
 
 .macro	DECODE
-	clr	w
+	ldi	zl, low(2*lookup0)
+	ldi	zh, high(2*lookup0)
+	add	zl, col
 	mov	w, row
 	lsl	w
 	lsl	w
-	add	w, col
-	mov	zl, w
-	subi	zl, low(-2*lookup0)	; load table of row 0
-	sbci	zh, high(-2*lookup0)
+	add	zl, w
 	lpm
 	mov	@0, r0
-	clr	row
-	clr	col
 .endmacro
 
 main:
-	PRINTF	LCD
-	.db CR, "nbr to guess: "
-	.db 0
-setup:
 	DECODE	b0
-	cpi	b0, 0x20
-	breq	setup
-	rcall	LCD_clear
-	rcall	LCD_home
 	PRINTF	LCD
-	.db CR, "nbr to guess: ", FCHAR, b	; final look at value to guess
+	.db CR, "nbr to guess: ", FCHAR, b
 	.db 0
-	WAIT_MS	3000
-	; --- Guessing ---
-	rcall	LCD_clear
-	rcall	LCD_home
-	PRINTF	LCD
-	.db CR, "guess: "
-	.db 0
-	
-guess:
-	DECODE	a0
-	cpi	a0, 0x20
-	breq	guess
-	rcall	LCD_clear
-	rcall	LCD_home
-	PRINTF	LCD
-	.db CR, "guess: ", FCHAR, a
-	.db 0
+	rjmp	main
+
 done:
 	WAIT_MS	2000
 	clr	a0

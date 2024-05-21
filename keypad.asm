@@ -131,7 +131,7 @@ reset:
 
 ; ——— lookup table ———
 lookup0:
-.db "123A456B789C*0#D"
+.db " 123A456B789C*0#D"
 
 
 .macro	DECODE
@@ -147,11 +147,20 @@ lookup0:
 .endmacro
 
 main:
+	; --- init ---
+	rcall	LCD_clear
+	rcall	LCD_home
+	PRINTF	LCD
+	.db CR, "nbr to guess: "
+	.db 0
 	DECODE	b0
+	cpi	b0, 0x20	; compare b0 to space char
+	breq	main
+	rcall	LCD_clear
+	rcall	LCD_home
 	PRINTF	LCD
 	.db CR, "nbr to guess: ", FCHAR, b
 	.db 0
-	rjmp	main
 
 done:
 	WAIT_MS	2000

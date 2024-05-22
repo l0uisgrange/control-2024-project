@@ -126,7 +126,7 @@ main:
 	DECODE	b0
 	cpi	b0, 0x20		; compare b0 to space char
 	breq	main
-	DISPLAY_RESET
+	rcall 	display_reset
 	PRINTF	LCD
 	.db CR, "Char to guess", LF, FCHAR, b
 	.db 0
@@ -149,7 +149,7 @@ guess:
 	WAIT_MS	1500
 
 	; –– check if guess correct ––
-	DISPLAY_RESET
+	rcall 	display_reset
 	cp	a0, b0
 	breq	success
 
@@ -178,7 +178,7 @@ success:
 	rcall	victory
 	WAIT_MS	1500
 	CLR4	a0, b0, row, col
-	DISPLAY_RESET
+	rcall 	display_reset
 	rjmp	main
 
 checkm8:

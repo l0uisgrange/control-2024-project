@@ -136,6 +136,7 @@ main:
 
 ; ––– make a guess –––
 guess:
+	clt
 	PRINTF	LCD
 	.db CR, "Guess the char"
 	.db 0
@@ -156,15 +157,23 @@ guess:
 	; –– wrong guess ––
 	inc	c3
 	ldi	w, 0x04
-	cpse	c3, w	
-	rcall	checkm8
+	cpse	c3, w
+	rcall	wrong
+	brts	guess
+
+	; ––– max attempts reached –––
+	CLR5	d0, d1, d2, d3, c3
+	rcall	eeprom_load
+	dec	d0
+	sbrs	d0, 7
+	rcall	eeprom_store
+	rcall	eeprom_load
 	PRINTF	LCD
-	.db CR, "Wrong!", LF, "Current score: ", FDEC, d
+	.db CR, "You lost!", LF, "Current score: ", FDEC, d
 	.db 0
+	rcall	loss
 	WAIT_MS	1500
-	rcall 	display_reset
-	CLR3	a0, row, col
-	rjmp	guess
+	rjmp	main
 
 ; –– correct guess ––
 success:
@@ -180,21 +189,15 @@ success:
 	CLR4	a0, b0, row, col
 	rcall 	display_reset
 	rjmp	main
-
-checkm8:
-	CLR5	d0, d1, d2, d3, c3
-	rcall	eeprom_load
-	dec	d0
-	sbrs	d0, 7
-	rcall	eeprom_store
-	rcall	eeprom_load
+wrong:
 	PRINTF	LCD
-	.db CR, "You lost!", LF, "Current score: ", FDEC, d
+	.db CR, "Wrong!", LF, "Current score: ", FDEC, d
 	.db 0
-	rcall	loss
 	WAIT_MS	1500
-	rjmp	main
-
+	rcall 	display_reset
+	CLR3	a0, row, col
+	set
+	ret
 
 victory:
 	ldi	zl, low(2*win)

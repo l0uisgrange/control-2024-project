@@ -98,6 +98,7 @@ isr_return:
 .include "lcd.asm"
 .include "printf.asm"
 .include "sound.asm"
+.include "eeprom.asm"
 
 .org 0x400
 
@@ -144,7 +145,7 @@ lookup0:
 .endmacro
 
 main:
-	; --- setup ---
+	; ––– setup –––
 	PRINTF	LCD
 	.db CR, "Char to guess"
 	.db 0
@@ -228,3 +229,10 @@ win:
 
 death:
 .db	so2, re3, 0, 0, re3, 0, re3, 0, do3, 0, si2, 0, so2, so2, 0, 0, mi2, do2, do2, 0xff 
+
+store:
+	ldi	xl, low(0)
+	ldi	xh, high(0)
+	rcall	eeprom_store
+fetch:
+	rcall	eeprom_load

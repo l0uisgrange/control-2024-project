@@ -171,7 +171,7 @@ main:
 	PRINTF	LCD
 	.db CR, "Char to guess", LF, FCHAR, b
 	.db 0
-	MOTOR	0101
+	MOTOR	0b0101
 	WAIT_MS	2000
 	rcall	LCD_clear
 	rcall	LCD_home
@@ -189,7 +189,7 @@ guess:
 	PRINTF	LCD
 	.db CR, "Guess the char", LF, FCHAR, a
 	.db 0
-	MOTOR	1010
+	MOTOR	0b1010
 	WAIT_MS	1000
 check:
 	rcall	LCD_clear

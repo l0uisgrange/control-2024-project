@@ -3,12 +3,15 @@
 ; author (c) R.Holzer (adapted MICRO210/EE208 A.Schmid)
 ; v2019.01 20180820 AxS
 
-
 ; ==============
-; 	pointers
+; 	Custom
 ; ==============
 
-; --- custom for lookup mastermind ---
+.macro	DISPLAY_RESET
+	rcall	LCD_clear
+	rcall	LCD_home
+.endmacro
+
 .macro	DECODE
 	ldi	zl, low(2*lookup0)
 	ldi	zh, high(2*lookup0)
@@ -20,6 +23,10 @@
 	lpm
 	mov	@0, r0
 .endmacro
+
+; ==============
+; 	pointers
+; ==============
 
 ; --- loading an immediate into a pointer XYZ,SP ---
 .macro 	LDIX	; sram

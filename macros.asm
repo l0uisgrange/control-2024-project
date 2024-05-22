@@ -4,22 +4,6 @@
 ; v2019.01 20180820 AxS
 
 ; ==============
-; 	Custom
-; ==============
-
-.macro	DECODE
-	ldi	zl, low(2*lookup0)
-	ldi	zh, high(2*lookup0)
-	add	zl, col
-	mov	w, row
-	lsl	w
-	lsl	w
-	add	zl, w
-	lpm
-	mov	@0, r0
-.endmacro
-
-; ==============
 ; 	pointers
 ; ==============
 

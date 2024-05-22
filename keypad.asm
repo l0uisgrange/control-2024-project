@@ -181,16 +181,12 @@ check:
 	cp	a0, b0
 	breq	success
 fail:
-	CLR4	d0, d1, d2, d3
-	rcall	eeprom_load
-	dec	d0
-	sbrs	d0, 7
-	rcall	eeprom_store
-	rcall	eeprom_load
+	inc	c3
+	cpi	c3, 0x04
+	breq	checkm8
 	PRINTF	LCD
 	.db CR, "Wrong !", LF, "Current score: ", FDEC, d
 	.db 0
-	rcall	loss
 	WAIT_MS	1000
 	rcall	LCD_clear
 	rcall	LCD_home
@@ -212,6 +208,18 @@ done:
 	rcall	LCD_home
 	rjmp	main
 
+checkm8:
+	CLR5	d0, d1, d2, d3, c3
+	rcall	eeprom_load
+	dec	d0
+	sbrs	d0, 7
+	rcall	eeprom_store
+	rcall	eeprom_load
+	PRINTF	LCD
+	.db CR, "You failed!", LF, "Current score:", FDEC, d
+	.db 0
+	rcall	loss
+	WAIT_MS	1000
 victory:
 	ldi	zl, low(2*win)
 	ldi	zh, high(2*win)

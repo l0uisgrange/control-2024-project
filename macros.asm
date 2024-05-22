@@ -8,6 +8,19 @@
 ; 	pointers
 ; ==============
 
+; --- custom for lookup mastermind ---
+.macro	DECODE
+	ldi	zl, low(2*lookup0)
+	ldi	zh, high(2*lookup0)
+	add	zl, col
+	mov	w, row
+	lsl	w
+	lsl	w
+	add	zl, w
+	lpm
+	mov	@0, r0
+.endmacro
+
 ; --- loading an immediate into a pointer XYZ,SP ---
 .macro 	LDIX	; sram
 	ldi	xl, low(@0)

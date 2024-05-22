@@ -10,7 +10,7 @@
 .def	row = r1			; detected row in hex
 .def	mask = r14			; row mask indicating which row has been detected in bin
 
-; ––– interrupt vectors table –––
+; ——— interrupt vectors table ———
 .org 0
 	jmp 	reset
 	jmp 	keypad_int0		; external interrupt INT0
@@ -118,7 +118,7 @@ reset:
 	rcall 	display_reset
 	sei
 
-; ––– game configuration –––
+; ——— game configuration ———
 main:
 	PRINTF	LCD
 	.db CR, "Char to guess"
@@ -134,7 +134,7 @@ main:
 	rcall 	display_reset
 	CLR2	row, col
 
-; ––– make a guess –––
+; ——— make a guess ———
 guess:
 	clt
 	PRINTF	LCD
@@ -149,19 +149,19 @@ guess:
 	.db 0
 	WAIT_MS	1500
 
-	; –– check if guess correct ––
+	; ——— check if guess correct ———
 	rcall 	display_reset
 	cp	a0, b0
 	breq	success
 
-	; –– wrong guess ––
+	; ——— wrong guess ———
 	inc	c3
 	ldi	w, 0x04
 	cpse	c3, w
 	rcall	wrong
 	brts	guess
 
-	; ––– max attempts reached –––
+	; ——— max attempts reached ———
 	CLR5	d0, d1, d2, d3, c3
 	rcall	eeprom_load
 	dec	d0
@@ -173,9 +173,10 @@ guess:
 	.db 0
 	rcall	loss
 	WAIT_MS	1500
-	rjmp	main
+	CLR4	a0, b0, row, col
+	jmp	main
 
-; –– correct guess ––
+; ——— correct guess ———
 success:
 	CLR4	d0, d1, d2, d3
 	rcall	eeprom_load
@@ -189,13 +190,15 @@ success:
 	CLR4	a0, b0, row, col
 	rcall 	display_reset
 	rjmp	main
+
+; ——— wrong guess ———
 wrong:
 	PRINTF	LCD
 	.db CR, "Wrong!", LF, "Current score: ", FDEC, d
 	.db 0
 	WAIT_MS	1500
-	rcall 	display_reset
 	CLR3	a0, row, col
+	rcall 	display_reset
 	set
 	ret
 
@@ -219,7 +222,7 @@ end:
 	rcall	sound_off
 	ret	
 
-; ––– Subroutines ––––
+; ——— subroutines ———
 display_reset:
 	rcall	LCD_clear
 	rcall	LCD_home
@@ -229,7 +232,7 @@ display_reset:
 lookup0:
 .db " 123A456B789C*0#D"
 
-; ––– mario winner sound table –––
+; ——— mario winner sound table ———
 win:
 .db	so, do2, mi2, so2, do3, mi3, so3, so3, so3, mi3, mi3, 0
 .db	som, do2, rem2, som2, do3, fam3, som3, som3, som3, rem2, rem2, 0

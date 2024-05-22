@@ -183,7 +183,7 @@ check:
 fail:
 	CLR4	d0, d1, d2, d3
 	rcall	eeprom_load
-	dec	d3
+	dec	d0
 	rcall	eeprom_store
 	PRINTF	LCD
 	.db CR, "Wrong !", LF, "Current score: ", FDEC, d
@@ -197,7 +197,7 @@ fail:
 success:
 	CLR4	d0, d1, d2, d3
 	rcall	eeprom_load
-	inc	d3
+	inc	d0
 	rcall	eeprom_store
 	PRINTF	LCD
 	.db CR, "Correct !", LF, "Current score: ", FDEC, d

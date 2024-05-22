@@ -98,6 +98,7 @@ isr_return:
 .include "lcd.asm"			; include UART routines
 .include "printf.asm"
 .include "sound.asm"
+.include "motor.asm"
 
 .org 0x400
 
@@ -110,6 +111,7 @@ reset:
 	OUTI	EIMSK, 0x0f		; enable INT0-INT3
 	OUTI	EICRB, 0b0		;>at low level
 	OUTI	DDRE, 0xff
+	OUTI	DDRC, 0x0f		; power stepper motor
 	clr	col
 	clr	row
 	clr	sem
@@ -169,6 +171,7 @@ main:
 	PRINTF	LCD
 	.db CR, "Char to guess", LF, FCHAR, b
 	.db 0
+	MOTOR	0101
 	WAIT_MS	2000
 	rcall	LCD_clear
 	rcall	LCD_home
@@ -186,6 +189,7 @@ guess:
 	PRINTF	LCD
 	.db CR, "Guess the char", LF, FCHAR, a
 	.db 0
+	MOTOR	1010
 	WAIT_MS	1000
 check:
 	rcall	LCD_clear

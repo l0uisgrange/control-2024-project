@@ -181,8 +181,12 @@ check:
 	cp	a0, b0
 	breq	success
 fail:
+	CLR4	d0, d1, d2, d3
+	rcall	eeprom_load
+	dec	d3
+	rcall	eeprom_store
 	PRINTF	LCD
-	.db CR, "Wrong guess !", LF, "Try again."
+	.db CR, "Wrong !", LF, "Current score: ", FDEC, d
 	.db 0
 	rcall	loss
 	WAIT_MS	1000
@@ -191,8 +195,12 @@ fail:
 	CLR3	a0, row, col
 	rjmp	guess
 success:
+	CLR4	d0, d1, d2, d3
+	rcall	eeprom_load
+	inc	d3
+	rcall	eeprom_store
 	PRINTF	LCD
-	.db CR, "Correct !", LF, "Well done."
+	.db CR, "Correct !", LF, "Current score: ", FDEC, d
 	.db 0
 	rcall	victory
 	WAIT_MS	1000
@@ -229,10 +237,3 @@ win:
 
 death:
 .db	so2, re3, 0, 0, re3, 0, re3, 0, do3, 0, si2, 0, so2, so2, 0, 0, mi2, do2, do2, 0xff 
-
-store:
-	ldi	xl, low(0)
-	ldi	xh, high(0)
-	rcall	eeprom_store
-fetch:
-	rcall	eeprom_load

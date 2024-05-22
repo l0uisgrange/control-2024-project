@@ -7,11 +7,6 @@
 ; 	Custom
 ; ==============
 
-.macro	DISPLAY_RESET
-	rcall	LCD_clear
-	rcall	LCD_home
-.endmacro
-
 .macro	DECODE
 	ldi	zl, low(2*lookup0)
 	ldi	zh, high(2*lookup0)

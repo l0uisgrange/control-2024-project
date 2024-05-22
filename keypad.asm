@@ -240,4 +240,4 @@ win:
 .db	lam, re2, fa2, lam2, re3, fa3, lam3, lam3, lam3, lam3, 0, lam3, 0, lam3, do4, do4, do4, do4, do4, do4, do4, do4, 0xff
 
 death:
-.db	sol2, re3, 0, re3, 0, re3, re3, 0, do3, do3, 0, si2, si2, 0, so2, mi2, 0, mi2, do2, do2, 0xff
+.db	so2, re3, 0, 0, re3, 0, re3, 0, do3, 0, si2, 0, so2, so2, 0, 0, mi2, do2, do2, 0xff 

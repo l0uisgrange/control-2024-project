@@ -130,7 +130,7 @@ main:
 	PRINTF	LCD
 	.db CR, "Char to guess", LF, FCHAR, b
 	.db 0
-	WAIT_MS	2000
+	WAIT_MS	1500
 	DISPLAY_RESET
 	CLR2	row, col
 
@@ -146,7 +146,7 @@ guess:
 	PRINTF	LCD
 	.db CR, "Guess the char", LF, FCHAR, a
 	.db 0
-	WAIT_MS	1000
+	WAIT_MS	1500
 
 ; –– check if guess correct ––
 check:
@@ -160,7 +160,7 @@ fail:
 	_CPI	c3, 0x04
 	breq	checkm8
 	DISPLAY_RESULT "Wrong!"
-	WAIT_MS	1000
+	WAIT_MS	1500
 	DISPLAY_RESET
 	CLR3	a0, row, col
 	rjmp	guess
@@ -173,7 +173,7 @@ success:
 	rcall	eeprom_store
 	DISPLAY_RESULT "Correct!"
 	rcall	victory
-	WAIT_MS	1000
+	WAIT_MS	1500
 done:
 	CLR4	a0, b0, row, col
 	DISPLAY_RESET
@@ -187,7 +187,7 @@ checkm8:
 	rcall	eeprom_load
 	DISPLAY_RESULT "You lost!"
 	rcall	loss
-	WAIT_MS	1000
+	WAIT_MS	1500
 	rjmp	main
 victory:
 	ldi	zl, low(2*win)

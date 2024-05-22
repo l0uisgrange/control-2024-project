@@ -158,7 +158,9 @@ guess:
 	ldi	w, 0x04
 	cpse	c3, w	
 	rcall	checkm8
-	DISPLAY_RESULT "Wrong!"
+	PRINTF	LCD
+	.db CR, "Wrong!", LF, "Current score: ", FDEC, d
+	.db 0
 	WAIT_MS	1500
 	DISPLAY_RESET
 	CLR3	a0, row, col
@@ -170,7 +172,9 @@ success:
 	rcall	eeprom_load
 	inc	d0
 	rcall	eeprom_store
-	DISPLAY_RESULT "Correct!"
+	PRINTF	LCD
+	.db CR, "Correct!", LF, "Current score: ", FDEC, d
+	.db 0
 	rcall	victory
 	WAIT_MS	1500
 	CLR4	a0, b0, row, col
@@ -184,7 +188,9 @@ checkm8:
 	sbrs	d0, 7
 	rcall	eeprom_store
 	rcall	eeprom_load
-	DISPLAY_RESULT "You lost!"
+	PRINTF	LCD
+	.db CR, "You lost!", LF, "Current score: ", FDEC, d
+	.db 0
 	rcall	loss
 	WAIT_MS	1500
 	rjmp	main
@@ -209,6 +215,8 @@ play:
 end:
 	rcall	sound_off
 	ret	
+
+; ––– Subroutines ––––
 
 ; ——— keypad lookup table ———
 lookup0:

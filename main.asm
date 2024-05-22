@@ -115,7 +115,7 @@ reset:
 	.db	CR, "Welcome to", CR, LF, "Mastermind"
 	.db     0
 	WAIT_MS 3000
-	DISPLAY_RESET
+	rcall 	display_reset
 	sei
 
 ; ––– game configuration –––
@@ -131,7 +131,7 @@ main:
 	.db CR, "Char to guess", LF, FCHAR, b
 	.db 0
 	WAIT_MS	1500
-	DISPLAY_RESET
+	rcall 	display_reset
 	CLR2	row, col
 
 ; ––– make a guess –––
@@ -142,7 +142,7 @@ guess:
 	DECODE	a0
 	cpi	a0, 0x20		; compare a0 to space char
 	breq	guess
-	DISPLAY_RESET
+	rcall 	display_reset
 	PRINTF	LCD
 	.db CR, "Guess the char", LF, FCHAR, a
 	.db 0
@@ -162,7 +162,7 @@ guess:
 	.db CR, "Wrong!", LF, "Current score: ", FDEC, d
 	.db 0
 	WAIT_MS	1500
-	DISPLAY_RESET
+	rcall 	display_reset
 	CLR3	a0, row, col
 	rjmp	guess
 
@@ -217,6 +217,10 @@ end:
 	ret	
 
 ; ––– Subroutines ––––
+display_reset:
+	rcall	LCD_clear
+	rcall	LCD_home
+	ret
 
 ; ——— keypad lookup table ———
 lookup0:

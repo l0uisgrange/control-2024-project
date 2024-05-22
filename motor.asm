@@ -1,6 +1,6 @@
 ; file	motor.asm   target ATmega128L-4MHz-STK300
 ; purpose stepper motor control
-; module: M1, output port: PORTA
+; module: M1, output port: PORTC
 .include "macros.asm"
 .include "definitions.asm"
 
@@ -14,10 +14,10 @@
 .endmacro		
 	
 reset:	
-	LDSP	RAMEND		; load stack pointer SP
+	LDSP	RAMEND			; load stack pointer SP
 	OUTI	DDRC,0x0f		; make motor port output
 loop:	
-	MOTOR	0b0101			; output motor patterns COMPLETE HERE
+	MOTOR	0b0101			
 	MOTOR	0b0001	
 	MOTOR	0b1011
 	MOTOR	0b1010

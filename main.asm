@@ -118,8 +118,8 @@ reset:
 	rcall	LCD_home
 	sei
 
+; ––– game start –––
 main:
-	; ––– setup –––
 	PRINTF	LCD
 	.db CR, "Char to guess"
 	.db 0

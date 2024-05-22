@@ -148,17 +148,16 @@ guess:
 	.db 0
 	WAIT_MS	1500
 
-; –– check if guess correct ––
-check:
+	; –– check if guess correct ––
 	DISPLAY_RESET
 	cp	a0, b0
 	breq	success
 
-; –– wrong guess ––
-fail:
+	; –– wrong guess ––
 	inc	c3
-	_CPI	c3, 0x04
-	breq	checkm8
+	ldi	w, 0x04
+	cpse	c3, w	
+	rcall	checkm8
 	DISPLAY_RESULT "Wrong!"
 	WAIT_MS	1500
 	DISPLAY_RESET
@@ -174,10 +173,10 @@ success:
 	DISPLAY_RESULT "Correct!"
 	rcall	victory
 	WAIT_MS	1500
-done:
 	CLR4	a0, b0, row, col
 	DISPLAY_RESET
 	rjmp	main
+
 checkm8:
 	CLR5	d0, d1, d2, d3, c3
 	rcall	eeprom_load
@@ -189,6 +188,8 @@ checkm8:
 	rcall	loss
 	WAIT_MS	1500
 	rjmp	main
+
+
 victory:
 	ldi	zl, low(2*win)
 	ldi	zh, high(2*win)

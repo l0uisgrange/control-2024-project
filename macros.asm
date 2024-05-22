@@ -7,6 +7,12 @@
 ; 	Custom
 ; ==============
 
+.macro	DISPLAY_RESULT
+	PRINTF	LCD
+	.db CR, @0, LF, "Current score: ", FDEC, d
+	.db 0
+.endmacro
+
 .macro	DISPLAY_RESET
 	rcall	LCD_clear
 	rcall	LCD_home

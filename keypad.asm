@@ -112,25 +112,11 @@ reset:
 	OUTI	EICRB, 0b0		;>at low level
 	OUTI	DDRE, 0xff
 	OUTI	DDRC, 0x0f		; power stepper motor
-	clr	col
-	clr	row
-	clr	sem
-	clr	a0
-	clr	a1				
-	clr	a2
-	clr	a3
-	clr	b0
-	clr	b1
-	clr	b2
-	clr	b3
-	clr	c0
-	clr	c1
-	clr	c2
-	clr	c3
-	clr	d0
-	clr	d1
-	clr	d2
-	clr	d3
+	CLR3	col, row, sem
+	CLR4	a0, a1, a2, a3
+	CLR4	b0, b1, b2, b3
+	CLR4	c0, c1, c2, c3
+	CLR4	d0, d1, d2, d3
 	PRINTF  LCD
 	.db	CR, "Welcome to", CR, LF, "Mastermind"
 	.db     0
@@ -171,13 +157,12 @@ main:
 	PRINTF	LCD
 	.db CR, "Char to guess", LF, FCHAR, b
 	.db 0
-	MOTOR	0b0101
 	WAIT_MS	2000
 	rcall	LCD_clear
 	rcall	LCD_home
 	CLR2	row, col
 guess:
-	; --- guess ---
+	; ––– guess –––
 	PRINTF	LCD
 	.db CR, "Guess the char"
 	.db 0
@@ -189,7 +174,6 @@ guess:
 	PRINTF	LCD
 	.db CR, "Guess the char", LF, FCHAR, a
 	.db 0
-	MOTOR	0b1010
 	WAIT_MS	1000
 check:
 	rcall	LCD_clear
@@ -219,18 +203,18 @@ done:
 	rjmp	main
 
 victory:
-	ldi		zl, low(2*win)
-	ldi		zh, high(2*win)
+	ldi	zl, low(2*win)
+	ldi	zh, high(2*win)
 	rjmp 	play
 loss:
-	ldi		zl, low(2*death)
-	ldi		zh, high(2*death)
+	ldi	zl, low(2*death)
+	ldi	zh, high(2*death)
 play:
 	lpm
 	adiw	zl, 1
-	_CPI		r0, 0xff
+	_CPI	r0, 0xff
 	breq	end
-	mov		c0, r0
+	mov	c0, r0
 	_LDI	d0, 45
 	rcall	sound
 	rjmp	play
@@ -240,7 +224,7 @@ end:
 
 win:
 .db	so, do2, mi2, so2, do3, mi3, so3, so3, so3, mi3, mi3, 0
-.db som, do2, rem2, som2, do3, fam3, som3, som3, som3, rem2, rem2, 0
+.db	som, do2, rem2, som2, do3, fam3, som3, som3, som3, rem2, rem2, 0
 .db	lam, re2, fa2, lam2, re3, fa3, lam3, lam3, lam3, lam3, 0, lam3, 0, lam3, do4, do4, do4, do4, do4, do4, do4, do4, 0xff
 
 death:

@@ -1,3 +1,6 @@
+; file eeprom.asm	target ATmega128L-4MHz-STK300
+; purpose load and store to EEPROM memory
+
 eeprom_store:
 	sbic	EECR, EEWE	; skip if EEWE=0 (wait it EEWE=1)
 	rjmp	PC-1		; jump back to previous address

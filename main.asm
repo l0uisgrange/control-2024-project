@@ -114,72 +114,68 @@ reset:
 	.db	CR, "Welcome to", CR, LF, "Mastermind"
 	.db     0
 	WAIT_MS 3000
-	rcall   LCD_clear
-	rcall	LCD_home
+	DISPLAY_RESET
 	sei
 
-; ––– game start –––
+; ––– game configuration –––
 main:
 	PRINTF	LCD
 	.db CR, "Char to guess"
 	.db 0
 	DECODE	b0
-	cpi	b0, 0x20	; compare b0 to space char
+	cpi	b0, 0x20		; compare b0 to space char
 	breq	main
-	rcall	LCD_clear
-	rcall	LCD_home
+	DISPLAY_RESET
 	PRINTF	LCD
 	.db CR, "Char to guess", LF, FCHAR, b
 	.db 0
 	WAIT_MS	2000
-	rcall	LCD_clear
-	rcall	LCD_home
+	DISPLAY_RESET
 	CLR2	row, col
+
+; ––– make a guess –––
 guess:
-	; ––– guess –––
 	PRINTF	LCD
 	.db CR, "Guess the char"
 	.db 0
 	DECODE	a0
-	cpi	a0, 0x20	; compare a0 to space char
+	cpi	a0, 0x20		; compare a0 to space char
 	breq	guess
-	rcall	LCD_clear
-	rcall	LCD_home
+	DISPLAY_RESET
 	PRINTF	LCD
 	.db CR, "Guess the char", LF, FCHAR, a
 	.db 0
 	WAIT_MS	1000
+
+; –– check if guess correct ––
 check:
-	rcall	LCD_clear
-	rcall	LCD_home
+	DISPLAY_RESET
 	cp	a0, b0
 	breq	success
+
+; –– wrong guess ––
 fail:
 	inc	c3
 	_CPI	c3, 0x04
 	breq	checkm8
-	PRINTF	LCD
-	.db CR, "Wrong !", LF, "Current score: ", FDEC, d
-	.db 0
+	DISPLAY_RESULT "Wrong!"
 	WAIT_MS	1000
-	rcall	LCD_clear
-	rcall	LCD_home
+	DISPLAY_RESET
 	CLR3	a0, row, col
 	rjmp	guess
+
+; –– correct guess ––
 success:
 	CLR4	d0, d1, d2, d3
 	rcall	eeprom_load
 	inc	d0
 	rcall	eeprom_store
-	PRINTF	LCD
-	.db CR, "Correct !", LF, "Current score: ", FDEC, d
-	.db 0
+	DISPLAY_RESULT "Correct!"
 	rcall	victory
 	WAIT_MS	1000
 done:
 	CLR4	a0, b0, row, col
-	rcall	LCD_clear
-	rcall	LCD_home
+	DISPLAY_RESET
 	rjmp	main
 checkm8:
 	CLR5	d0, d1, d2, d3, c3
@@ -188,9 +184,7 @@ checkm8:
 	sbrs	d0, 7
 	rcall	eeprom_store
 	rcall	eeprom_load
-	PRINTF	LCD
-	.db CR, "You failed!", LF, "Current score:", FDEC, d
-	.db 0
+	DISPLAY_RESULT "You lost!"
 	rcall	loss
 	WAIT_MS	1000
 	rjmp	main

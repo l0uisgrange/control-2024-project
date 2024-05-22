@@ -186,6 +186,7 @@ fail:
 	dec	d0
 	sbrs	d0, 7
 	rcall	eeprom_store
+	rcall	eeprom_load
 	PRINTF	LCD
 	.db CR, "Wrong !", LF, "Current score: ", FDEC, d
 	.db 0

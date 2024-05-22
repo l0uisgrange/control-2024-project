@@ -95,10 +95,9 @@ isr_return:
 	OUTI PORTD, 0x0f
 	reti
 
-.include "lcd.asm"			; include UART routines
+.include "lcd.asm"
 .include "printf.asm"
 .include "sound.asm"
-.include "motor.asm"
 
 .org 0x400
 

@@ -10,30 +10,31 @@
 .def	row = r1			; detected row in hex
 .def	mask = r14			; row mask indicating which row has been detected in bin
 
+; ––– interrupt vectors table –––
 .org 0
 	jmp 	reset
-	jmp 	isr_ext_int0		; external interrupt INT0
-	jmp 	isr_ext_int1		; external interrupt INT1
-	jmp 	isr_ext_int2		; external interrupt INT2
-	jmp 	isr_ext_int3		; external interrupt INT3
+	jmp 	keypad_int0		; external interrupt INT0
+	jmp 	keypad_int1		; external interrupt INT1
+	jmp 	keypad_int2		; external interrupt INT2
+	jmp 	keypad_int3		; external interrupt INT3
 
-isr_ext_int0:
+keypad_int0:
 	_LDI	row, 0x00		; detect row 0
 	_LDI	mask, 0b00000001
 	out 	SREG, _sreg		; context restore
 	rjmp	column_detect
 
-isr_ext_int1:
+keypad_int1:
 	_LDI	row, 0x01		;detect row 1
 	_LDI	mask, 0b00000010
 	rjmp	column_detect
 
-isr_ext_int2:
+keypad_int2:
 	_LDI	row, 0x02		;detect row 2
 	_LDI	mask, 0b00000100
 	rjmp	column_detect
 
-isr_ext_int3:
+keypad_int3:
 	_LDI	row, 0x03		;detect row 1
 	_LDI	mask, 0b00001000
 	rjmp	column_detect

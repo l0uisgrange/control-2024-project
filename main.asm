@@ -79,8 +79,7 @@ reset:
 	.db	CR, "Welcome to", CR, LF, "Mastermind"
 	.db     0
 	WAIT_MS 3000
-	rcall   LCD_clear
-	rcall	LCD_home
+	LCD_CH
 	sei
 
 ; ––– game configuration –––
@@ -91,14 +90,12 @@ main:
 	DECODE	b0			; using the lookup table to decode key pressed by user
 	cpi	b0, 0x20		; compare b0 to space char AKA no key pressed (init state)
 	breq	main
-	rcall	LCD_clear
-	rcall	LCD_home
+	LCD_CH
 	PRINTF	LCD			; displaying char chosen by user1
 	.db CR, "Char to guess :", LF, FCHAR, b
 	.db 0
 	WAIT_MS	2000
-	rcall	LCD_clear
-	rcall	LCD_home
+	LCD_CH
 	CLR2	row, col
 
 ; ––– guess secret number –––
@@ -109,15 +106,13 @@ guess:
 	DECODE	a0			; using the lookup table to decode key pressed by user
 	cpi	a0, 0x20		; compare a0 to space char AKA no key pressed (init state)
 	breq	guess
-	rcall	LCD_clear
-	rcall	LCD_home
+	LCD_CH
 	PRINTF	LCD			; display guess made by user2
 	.db CR, "Guess the char", LF, FCHAR, a
 	.db 0
 	WAIT_MS	1000
 check:
-	rcall	LCD_clear
-	rcall	LCD_home
+	LCD_CH
 	cp	a0, b0			; check if guess corresponds to secret char
 	breq	success
 fail:
@@ -132,8 +127,7 @@ fail:
 	.db 0
 	rcall	loss
 	WAIT_MS	1000
-	rcall	LCD_clear
-	rcall	LCD_home
+	LCD_CH
 	CLR3	a0, row, col
 	rjmp	guess
 success:
@@ -148,8 +142,7 @@ success:
 	WAIT_MS	1000
 done:
 	CLR4	a0, b0, row, col
-	rcall	LCD_clear
-	rcall	LCD_home
+	LCD_CH
 	rjmp	main
 
 victory:				; load victory music sheet

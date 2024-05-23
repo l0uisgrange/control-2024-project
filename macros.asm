@@ -1,13 +1,7 @@
-; file:	macros.asm   target ATmega128L-4MHz-STK300
+; file:	macros.asm target ATmega128L-4MHz-STK300
 ; purpose library, general-purpose macros
-; author (c) R.Holzer (adapted MICRO210/EE208 A.Schmid, L.Grange, A.Lassagne)
-; v2019.02 20240523 LxG AxL
 
-; ==============
-; 	custom
-; ==============
-
-; ––– Decode button pressed on keypad –––
+; ––– decode button pressed on keypad –––
 .macro	DECODE
 	ldi	zl, low(2*lookup0)		; load lookup table address
 	ldi	zh, high(2*lookup0)

@@ -28,6 +28,13 @@
 	rjmp	isr_return
 .endmacro
 
+; ––– clear and reset LCD –––
+.macro	LCD_CH
+	rcall	LCD_clear
+	rcall	LCD_home
+.endmacro
+
+
 ; ==============
 ; 	pointers
 ; ==============

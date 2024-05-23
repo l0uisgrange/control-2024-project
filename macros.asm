@@ -23,7 +23,8 @@
 	and	w, mask			; masking the selected row
 	tst	w			; testing if column is pressed (test for 0 or minus)
 	brne	@1
-	_LDI	col, @02		; added 1 for ops with lookup table
+	add	@02, 1			; added 1 for ops with lookup table
+	_LDI	col, @02		
 	rjmp	isr_return
 .endmacro
 

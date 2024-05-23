@@ -42,50 +42,14 @@ isr_ext_int3:
 column_detect:
 	OUTI	PORTD, 0xff		; bit4-7 driven high (lines)
 
-col3:					
-	WAIT_MS	KPD_DELAY
-	OUTI	PORTD, 0b01111111	; check column 3 'ABCD'
-	WAIT_MS	KPD_DELAY
-	in	w, PIND			
-	and	w, mask			; masking the selected row
-	tst	w			; testing if column is pressed (test for 0 or minus)
-	brne	col2
-	_LDI	col, 0x04		; added 1 for ops with lookup table
-	rjmp	isr_return
-
+col3:	
+	COLDETECT 0b01111111, col2, 0x04
 col2:
-	WAIT_MS	KPD_DELAY
-	OUTI	PORTD, 0b10111111	; check column 2 '369#'
-	WAIT_MS	KPD_DELAY
-	in	w, PIND			
-	and	w, mask			; masking the selected row
-	tst	w			; testing if column is pressed (test for 0 or minus)
-	brne	col1
-	_LDI	col, 0x03		; added 1 for ops with lookup table
-	rjmp	isr_return
-
+	COLDETECT 0b10111111, col1, 0x03
 col1:
-	WAIT_MS	KPD_DELAY
-	OUTI	PORTD, 0b11011111	; check column 1 '2580'
-	WAIT_MS	KPD_DELAY
-	in	w, PIND			
-	and	w, mask			; masking the selected row
-	tst	w			; testing if column is pressed (test for 0 or minus)
-	brne	col0
-	_LDI	col, 0x02		; added 1 for ops with lookup table
-	rjmp	isr_return
-
+	COLDETECT 0b11011111, col0, 0x02
 col0:
-	WAIT_MS	KPD_DELAY
-	OUTI	PORTD, 0b11101111	; check column 0 '147*'
-	WAIT_MS	KPD_DELAY
-	in	w, PIND			
-	and	w, mask			; masking the selected row
-	tst	w			; testing if column is pressed (test for 0 or minus)
-	brne	isr_return
-	_LDI	col, 0x01		; added 1 for ops with lookup table
-	rjmp	isr_return
-
+	COLDETECT 0b11101111, isr_return, 0x01
 isr_return:
 	OUTI PORTD, 0x0f
 	reti

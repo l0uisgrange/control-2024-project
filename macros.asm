@@ -14,6 +14,19 @@
 	mov	@0, r0
 .endmacro
 
+; ––– detect column –––
+.macro 	COLDETECT			; -> PORTD pattern, branch, value
+	WAIT_MS	KPD_DELAY
+	OUTI	PORTD, @0		; check column 3 'ABCD'
+	WAIT_MS	KPD_DELAY
+	in	w, PIND			
+	and	w, mask			; masking the selected row
+	tst	w			; testing if column is pressed (test for 0 or minus)
+	brne	@1
+	_LDI	col, @02		; added 1 for ops with lookup table
+	rjmp	isr_return
+.endmacro
+
 ; ==============
 ; 	pointers
 ; ==============

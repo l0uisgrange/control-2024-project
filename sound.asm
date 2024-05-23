@@ -1,10 +1,10 @@
-; file:	sound.asm   target ATmega128L-4MHz-STK300
+; file sound.asm target ATmega128L-4MHz-STK300
 ; purpose library, sound generation
 
+; ——— play sound ———
 sound:
-; in	a0	period of oscillation (in 10us)
-; 	b0	duration of sound (in 2.5ms)
-
+	; in	a0	period of oscillation (in 10us)
+	; 	b0	duration of sound (in 2.5ms)
 	mov	d1,d0		; duration high byte = b
 	clr	d0		; duration  low byte = 0
 	clr	c1		; period high byte = a
@@ -22,6 +22,7 @@ sound1:
 	brcc	sound1		; continue if duration>0
 	ret
 
+; ——— stop sound ———
 sound_off:
 	_LDI	c0,1
 	rcall	wait9us
@@ -30,17 +31,15 @@ sound_off:
 	brcc	PC-3		; continue if duration>0
 	ret
 
-; === wait routines ===
-
+; ——— wait routines ———
 wait9us:rjmp	PC+1		; waiting 2 cycles
 	rjmp	PC+1		; waiting 2 cylces
 wait8us:rcall	wait4us		; recursive call with "falling through"
 wait4us:rcall	wait2us	
 wait2us:nop
-	ret		; rcall(4), nop(1), ret(3) = 8cycl. (=2us)
+	ret			; rcall(4), nop(1), ret(3) = 8cycl. (=2us)
 
-; === calculation of the musical scale ===
- 
+; ——— calculation of the musical scale ———
 ; period (10us)	= 100'000/freq(Hz)
 .equ	do	= 100000/517	; (517 Hz)
 .equ	dom	= do*944/1000	; do major
@@ -81,4 +80,4 @@ wait2us:nop
 .equ	lam3	= lam/4
 .equ	si3	= si/4	
 
-.equ	do4 = do/8
+.equ	do4 	= do/8

@@ -22,7 +22,7 @@
 isr_ext_int0:
 	_LDI	row, 0x00		; detect row 0
 	_LDI	mask, 0b00000001
-	out 	SREG, _sreg		; restauration du contexte
+	out 	SREG, _sreg		
 	rjmp	column_detect
 
 isr_ext_int1:
@@ -36,7 +36,7 @@ isr_ext_int2:
 	rjmp	column_detect
 
 isr_ext_int3:
-	_LDI	row, 0x03		; detect row 1
+	_LDI	row, 0x03		; detect row 3
 	_LDI	mask, 0b00001000
 	rjmp	column_detect
 
@@ -45,10 +45,10 @@ column_detect:
 
 col3:					
 	WAIT_MS	KPD_DELAY
-	OUTI	PORTD, 0b01111111	; check column 3
+	OUTI	PORTD, 0b01111111	; check column 3 'ABCD'
 	WAIT_MS	KPD_DELAY
-	in	w, PIND			; in PIND
-	and	w, mask			; we are masking the selected row
+	in	w, PIND			
+	and	w, mask			; masking the selected row
 	tst	w			; testing if column is pressed (test for 0 or minus)
 	brne	col2
 	_LDI	col, 0x04		; added 1 for ops with lookup table
@@ -56,10 +56,10 @@ col3:
 
 col2:
 	WAIT_MS	KPD_DELAY
-	OUTI	PORTD, 0b10111111	; check column 2
+	OUTI	PORTD, 0b10111111	; check column 2 '369#'
 	WAIT_MS	KPD_DELAY
-	in	w, PIND			; in PIND
-	and	w, mask		
+	in	w, PIND			
+	and	w, mask			; masking the selected row
 	tst	w			; testing if column is pressed (test for 0 or minus)
 	brne	col1
 	_LDI	col, 0x03		; added 1 for ops with lookup table
@@ -67,10 +67,10 @@ col2:
 
 col1:
 	WAIT_MS	KPD_DELAY
-	OUTI	PORTD, 0b11011111	; check column 1
+	OUTI	PORTD, 0b11011111	; check column 1 '2580'
 	WAIT_MS	KPD_DELAY
-	in	w, PIND			; in PIND
-	and	w, mask		
+	in	w, PIND			
+	and	w, mask			; masking the selected row
 	tst	w			; testing if column is pressed (test for 0 or minus)
 	brne	col0
 	_LDI	col, 0x02		; added 1 for ops with lookup table
@@ -78,10 +78,10 @@ col1:
 
 col0:
 	WAIT_MS	KPD_DELAY
-	OUTI	PORTD, 0b11101111	; check column 0
+	OUTI	PORTD, 0b11101111	; check column 0 '147*'
 	WAIT_MS	KPD_DELAY
-	in	w, PIND			; in PIND
-	and	w, mask		
+	in	w, PIND			
+	and	w, mask			; masking the selected row
 	tst	w			; testing if column is pressed (test for 0 or minus)
 	brne	isr_return
 	_LDI	col, 0x01		; added 1 for ops with lookup table
@@ -101,19 +101,18 @@ isr_return:
 
 reset:	
 	LDSP	RAMEND			; load Stack Pointer (SP)
-	rcall	LCD_init		; initialize UART
+	rcall	LCD_init		; initialize LCD
 	OUTI	DDRD, 0xf0		; bit0-3 pull-up and bits4-7 driven low
-	OUTI	PORTD, 0x0f		; >(needs the two lines)
-	OUTI	DDRB, 0xff		; turn on LEDs
+	OUTI	PORTD, 0x0f		
 	OUTI	EIMSK, 0x0f		; enable INT0-INT3
 	OUTI	EICRB, 0b0		; >at low level
-	OUTI	DDRE, 0xff
-	CLR3	col, row, sem
+	OUTI	DDRE, 0xff		; enable speaker port
+	CLR3	col, row, sem		; clearing registries
 	CLR4	a0, a1, a2, a3
 	CLR4	b0, b1, b2, b3
 	CLR4	c0, c1, c2, c3
 	CLR4	d0, d1, d2, d3
-	PRINTF  LCD
+	PRINTF  LCD			; printing welcome message
 	.db	CR, "Welcome to", CR, LF, "Mastermind"
 	.db     0
 	WAIT_MS 3000
@@ -124,15 +123,15 @@ reset:
 ; ––– game configuration –––
 main:
 	PRINTF	LCD
-	.db CR, "Char to guess"
+	.db CR, "Char to guess :"
 	.db 0
-	DECODE	b0
-	cpi	b0, 0x20	; compare b0 to space char
+	DECODE	b0			; using the lookup table to decode key pressed by user
+	cpi	b0, 0x20		; compare b0 to space char AKA no key pressed (init state)
 	breq	main
 	rcall	LCD_clear
 	rcall	LCD_home
-	PRINTF	LCD
-	.db CR, "Char to guess", LF, FCHAR, b
+	PRINTF	LCD			; displaying char chosen by user1
+	.db CR, "Char to guess :", LF, FCHAR, b
 	.db 0
 	WAIT_MS	2000
 	rcall	LCD_clear
@@ -144,28 +143,28 @@ guess:
 	PRINTF	LCD
 	.db CR, "Guess the char"
 	.db 0
-	DECODE	a0
-	cpi	a0, 0x20	; compare a0 to space char
+	DECODE	a0			; using the lookup table to decode key pressed by user
+	cpi	a0, 0x20		; compare a0 to space char AKA no key pressed (init state)
 	breq	guess
 	rcall	LCD_clear
 	rcall	LCD_home
-	PRINTF	LCD
+	PRINTF	LCD			; display guess made by user2
 	.db CR, "Guess the char", LF, FCHAR, a
 	.db 0
 	WAIT_MS	1000
 check:
 	rcall	LCD_clear
 	rcall	LCD_home
-	cp	a0, b0
+	cp	a0, b0			; check if guess corresponds to secret char
 	breq	success
 fail:
 	CLR4	d0, d1, d2, d3
+	rcall	eeprom_load		; load score from EEPROM and decrease it
+	dec	d0			; decrease score
+	sbrs	d0, 7			; if score <0 skip save in EEPROM
+	rcall	eeprom_store		; store new score in EEPROM
 	rcall	eeprom_load
-	dec	d0
-	sbrs	d0, 7
-	rcall	eeprom_store
-	rcall	eeprom_load
-	PRINTF	LCD
+	PRINTF	LCD			; display current score
 	.db CR, "Wrong !", LF, "Current score: ", FDEC, d
 	.db 0
 	rcall	loss
@@ -176,13 +175,13 @@ fail:
 	rjmp	guess
 success:
 	CLR4	d0, d1, d2, d3
-	rcall	eeprom_load
-	inc	d0
-	rcall	eeprom_store
-	PRINTF	LCD
+	rcall	eeprom_load		; load score from EEPROM
+	inc	d0			; increase score
+	rcall	eeprom_store		; save score to EEPROM
+	PRINTF	LCD			; display current score
 	.db CR, "Correct !", LF, "Current score: ", FDEC, d
 	.db 0
-	rcall	victory
+	rcall	victory			; play victory music
 	WAIT_MS	1000
 done:
 	CLR4	a0, b0, row, col
@@ -190,14 +189,14 @@ done:
 	rcall	LCD_home
 	rjmp	main
 
-victory:
+victory:				; load victory music sheet
 	ldi	zl, low(2*win)
 	ldi	zh, high(2*win)
-	rjmp 	play
-loss:
+	rjmp 	play			
+loss:					; load loss music sheet
 	ldi	zl, low(2*death)
 	ldi	zh, high(2*death)
-play:
+play:					; play loaded music sheet
 	lpm
 	adiw	zl, 1
 	_CPI	r0, 0xff
@@ -211,9 +210,9 @@ end:
 	ret	
 
 ; ——— lookup tables ———
-lookup0:
+lookup0:				; used to decode keypad button press
 .db " 123A456B789C*0#D"
-win:
+win:			
 .db	so, do2, mi2, so2, do3, mi3, so3, so3, so3, mi3, mi3, 0
 .db	som, do2, rem2, som2, do3, fam3, som3, som3, som3, rem2, rem2, 0
 .db	lam, re2, fa2, lam2, re3, fa3, lam3, lam3, lam3, lam3, 0, lam3, 0, lam3, do4, do4, do4, do4, do4, do4, do4, do4, 0xff

@@ -9,7 +9,6 @@
 .def	col = r2			; detected column in hex
 .def	row = r1			; detected row in hex
 .def	mask = r14			; row mask indicating which row has been detected in bin
-.def	sem = r15			; semaphore: must enter LCD display routine, unary: 0 or other
 
 ; ——— interrupt vector table ———
 .org 0
@@ -107,7 +106,7 @@ reset:
 	OUTI	EIMSK, 0x0f		; enable INT0-INT3
 	OUTI	EICRB, 0b0		; >at low level
 	OUTI	DDRE, 0xff		; enable speaker port
-	CLR3	col, row, sem		; clearing registries
+	CLR2	col, row		; clearing registries
 	CLR4	a0, a1, a2, a3
 	CLR4	b0, b1, b2, b3
 	CLR4	c0, c1, c2, c3

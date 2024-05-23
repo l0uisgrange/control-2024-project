@@ -1,19 +1,20 @@
 ; file:	macros.asm   target ATmega128L-4MHz-STK300
 ; purpose library, general-purpose macros
-; author (c) R.Holzer (adapted MICRO210/EE208 A.Schmid)
-; v2019.01 20180820 AxS
+; author (c) R.Holzer (adapted MICRO210/EE208 A.Schmid, L.Grange, A.Lassagne)
+; v2019.02 20240523 LxG AxL
 
 ; ==============
 ; 	custom
 ; ==============
 
+; ––– Decode button pressed on keypad –––
 .macro	DECODE
-	ldi	zl, low(2*lookup0)
+	ldi	zl, low(2*lookup0)		; load lookup table address
 	ldi	zh, high(2*lookup0)
-	add	zl, col
+	add	zl, col				; correct char address is given by: col + (4 x row)
 	mov	w, row
-	lsl	w
-	lsl	w
+	lsl	w				; multiply row by 2
+	lsl	w				; multiply row by 2
 	add	zl, w
 	lpm
 	mov	@0, r0

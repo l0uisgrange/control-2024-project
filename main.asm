@@ -43,13 +43,13 @@ column_detect:
 	OUTI	PORTD, 0xff		; bit4-7 driven high (lines)
 
 col3:	
-	COLDETECT 0b01111111, col2, 0x04
+	COLDETECT 0b01111111, col2, 0x03
 col2:
-	COLDETECT 0b10111111, col1, 0x03
+	COLDETECT 0b10111111, col1, 0x02
 col1:
-	COLDETECT 0b11011111, col0, 0x02
+	COLDETECT 0b11011111, col0, 0x01
 col0:
-	COLDETECT 0b11101111, isr_return, 0x01
+	COLDETECT 0b11101111, isr_return, 0x00
 isr_return:
 	OUTI PORTD, 0x0f
 	reti

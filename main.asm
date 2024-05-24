@@ -70,6 +70,7 @@ reset:
 	OUTI	EIMSK, 0x0f		; enable INT0-INT3
 	OUTI	EICRB, 0b0		; >at low level
 	OUTI	DDRE, 0xff		; enable speaker port
+	OUTI	DDRC, 0x00		; read card's buttons input
 	CLR2	col, row		; clearing registries
 	CLR4	a0, a1, a2, a3
 	CLR4	b0, b1, b2, b3
@@ -81,6 +82,18 @@ reset:
 	WAIT_MS 3000
 	LCD_CH
 	sei
+
+; ––– reset score –––
+clear_score:
+	sbic	PINC, 7			; check if switch 7 is pressed
+	jmp	main			; >jump to main if not
+	clr	d3			; >otherwise clear score in eeprom
+	rcall	eeprom_store
+	PRINTF	LCD
+	.db CR, "Score was reset"
+	.db 0
+	LCD_CH
+	WAIT_MS	1000
 
 ; ––– game configuration –––
 main:
@@ -101,14 +114,14 @@ main:
 ; ––– guess secret number –––
 guess:
 	PRINTF	LCD
-	.db CR, "Guess the char"
+	.db CR, "Guess the char :"
 	.db 0
 	DECODE	a0			; using the lookup table to decode key pressed by user
 	cpi	a0, 0x20		; compare a0 to space char AKA no key pressed (init state)
 	breq	guess
 	LCD_CH
 	PRINTF	LCD			; display guess made by user2
-	.db CR, "Guess the char", LF, FCHAR, a
+	.db CR, "Guess the char :", LF, FCHAR, a
 	.db 0
 	WAIT_MS	1000
 check:

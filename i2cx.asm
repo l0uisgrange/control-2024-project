@@ -2,6 +2,7 @@
 ; purpose extended I2C (400 k bit/s), software emulation
 
 ; ——— definitions ———
+.equ	EEPROM	= 0b10100000
 .equ	SDA_port= PORTB
 .equ	SDA_pin	= SDA
 .equ	SCL_port= PORTB

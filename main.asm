@@ -72,6 +72,9 @@ reset:
 	OUTI	EIMSK, 0x0f		; enable INT0-INT3
 	OUTI	EICRB, 0b0		; >at low level
 	OUTI	DDRE, 0xff		; enable speaker port
+	in	r16, SFIOR
+	ori	r16, (1<<PUD)
+	out	SFIOR, r16		; prepare I2C
 	CLR2	col, row		; clearing registries
 	CLR4	a0, a1, a2, a3
 	CLR4	b0, b1, b2, b3
@@ -102,7 +105,7 @@ reset_score:
 	LCD_CH
 	jmp show
 
-; ––– game configuration –––
+; ——— game configuration ———
 main:
 	PRINTF	LCD
 	.db CR, "Char to guess: "
@@ -118,7 +121,7 @@ main:
 	LCD_CH
 	CLR2	row, col
 
-; ––– guess secret number –––
+; ——— guess secret number ———
 guess:
 	PRINTF	LCD
 	.db CR, "Guess the char: "

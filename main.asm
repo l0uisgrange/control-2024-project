@@ -70,7 +70,7 @@ reset:
 	OUTI	EIMSK, 0x0f		; enable INT0-INT3
 	OUTI	EICRB, 0b0		; >at low level
 	OUTI	DDRE, 0xff		; enable speaker port
-	OUTI	DDRC, 0x00		; read card's buttons input
+	OUTI	DDRC, 0xfe		; read card's swithc 0 input
 	CLR2	col, row		; clearing registries
 	CLR4	a0, a1, a2, a3
 	CLR4	b0, b1, b2, b3
@@ -85,7 +85,8 @@ reset:
 
 ; ––– reset score –––
 clear_score:
-	sbic	PINC, 7			; check if switch 7 is pressed
+	in	w, PINC
+	sbrc	w, 0			; check if switch 7 is pressed
 	jmp	main			; >jump to main if not
 	clr	d3			; >otherwise clear score in eeprom
 	rcall	eeprom_store

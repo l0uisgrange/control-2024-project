@@ -1,4 +1,4 @@
-; file:	macros.asm target ATmega128L-4MHz-STK300
+; file	macros.asm target ATmega128L-4MHz-STK300
 ; purpose library, general-purpose macros
 
 ; ––– decode button pressed on keypad –––

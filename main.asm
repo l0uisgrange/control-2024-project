@@ -90,7 +90,7 @@ clear_score:
 	clr	d0			; >otherwise clear score in eeprom
 	rcall	eeprom_store
 	PRINTF	LCD
-	.db CR, "Score has been", LF, CR, "reset."
+	.db CR, "Score has been", CR, LF, "reset."
 	.db 0
 	WAIT_MS	1000
 	LCD_CH
@@ -99,7 +99,7 @@ clear_score:
 main:
 	rcall	LCD_blink_on
 	PRINTF	LCD
-	.db CR, "Char to guess :"
+	.db CR, "Char to guess :", CR, LF
 	.db 0
 	DECODE	b0			; using the lookup table to decode key pressed by user
 	cpi	b0, 0x20		; compare b0 to space char AKA no key pressed (init state)

@@ -42,14 +42,15 @@ isr_ext_int3:
 column_detect:
 	OUTI	PORTD, 0xff		; bit4-7 driven high (lines)
 
-col3:	
-	COLDETECT 0b01111111, col2, 0x03
+col3:
+	COLDETECT 0b01111111, col2, 0x04		
 col2:
-	COLDETECT 0b10111111, col1, 0x02
+	COLDETECT 0b10111111, col1, 0x03
 col1:
-	COLDETECT 0b11011111, col0, 0x01
+	COLDETECT 0b11011111, col0, 0x02
 col0:
-	COLDETECT 0b11101111, isr_return, 0x00
+	COLDETECT 0b11101111, isr_return, 0x01
+
 isr_return:
 	OUTI PORTD, 0x0f
 	reti
@@ -70,42 +71,47 @@ reset:
 	OUTI	EIMSK, 0x0f		; enable INT0-INT3
 	OUTI	EICRB, 0b0		; >at low level
 	OUTI	DDRE, 0xff		; enable speaker port
-	OUTI	DDRB, 0x00		; read card's swithc 0 input
 	CLR2	col, row		; clearing registries
 	CLR4	a0, a1, a2, a3
 	CLR4	b0, b1, b2, b3
 	CLR4	c0, c1, c2, c3
 	CLR4	d0, d1, d2, d3
+	rcall	eeprom_load
+	_CPI		d0, 0xff
+	brne	show
+	_LDI	d0, 0x00
+	rcall	eeprom_store
+show:
 	PRINTF  LCD			; printing welcome message
-	.db	CR, "Welcome to", CR, LF, "Mastermind"
+	.db	CR, "Welcome to", CR, LF, "Mastermind     ", FDEC, d
 	.db     0
+	_LDI	d0, 0x00
 	WAIT_MS 3000
 	LCD_CH
 	sei
-
-; ––– reset score –––
-clear_score:
-	sbic	PINB, 7			; check if switch 7 is pressed
-	jmp	main			; >jump to main if not
-	clr	d0			; >otherwise clear score in eeprom
+reset_score:
+	sbic	PINB, 7
+	jmp		main
+	CLR		d0
 	rcall	eeprom_store
 	PRINTF	LCD
 	.db CR, "Score has been", CR, LF, "reset."
 	.db 0
 	WAIT_MS	1000
 	LCD_CH
+	jmp show
 
 ; ––– game configuration –––
 main:
 	PRINTF	LCD
-	.db CR, "Char to guess :"
+	.db CR, "Char to guess: "
 	.db 0
 	DECODE	b0			; using the lookup table to decode key pressed by user
 	cpi	b0, 0x20		; compare b0 to space char AKA no key pressed (init state)
 	breq	main
 	LCD_CH
 	PRINTF	LCD			; displaying char chosen by user1
-	.db CR, "Char to guess :", LF, FCHAR, b
+	.db CR, "Char to guess: ", LF, FCHAR, b
 	.db 0
 	WAIT_MS	2000
 	LCD_CH
@@ -114,14 +120,14 @@ main:
 ; ––– guess secret number –––
 guess:
 	PRINTF	LCD
-	.db CR, "Guess the char :"
+	.db CR, "Guess the char: "
 	.db 0
 	DECODE	a0			; using the lookup table to decode key pressed by user
 	cpi	a0, 0x20		; compare a0 to space char AKA no key pressed (init state)
 	breq	guess
 	LCD_CH
 	PRINTF	LCD			; display guess made by user2
-	.db CR, "Guess the char :", LF, FCHAR, a
+	.db CR, "Guess the char: ", LF, FCHAR, a
 	.db 0
 	WAIT_MS	1000
 check:

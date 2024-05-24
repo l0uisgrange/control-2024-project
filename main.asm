@@ -85,7 +85,7 @@ reset:
 
 ; ––– reset score –––
 clear_score:
-	sbic	PINB, 0			; check if switch 7 is pressed
+	sbic	PINB, 7			; check if switch 7 is pressed
 	jmp	main			; >jump to main if not
 	clr	d0			; >otherwise clear score in eeprom
 	rcall	eeprom_store

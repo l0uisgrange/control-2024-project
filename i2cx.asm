@@ -30,7 +30,7 @@
 .macro	I2C_BIT_OUT	;bit
 	sbi	SCL_port-1,SCL_pin 	; pull SCL low (output, port=0)
 	in	w,SDA_port-1		; sample the SDA line
-	bst	a0,@0			; store a0(bit) to T
+	bst	d0,@0			; store d0(bit) to T
 	bld	w,SDA_pin		; load w(SDA) with T
 	out	SDA_port-1,w		; transfer bit_x to SDA
 	cbi	SCL_port-1,SCL_pin 	; release SCL (input, hi Z)
@@ -44,7 +44,7 @@
 	nop				; wait 1 cycle
 	in	w,SDA_port-2		; PINx=PORTx-2
 	bst	w,SDA_pin		; store bit read in T
-	bld	a0,@0			; load a0(bit) from T
+	bld	d0,@0			; load d0(bit) from T
 	.endmacro
 
 ; ——— routines ———
@@ -56,15 +56,15 @@ i2c_init:
 	ret
 
 i2c_rep_start:
-; in: 	a0 (byte to transmit)
+; in: 	d0 (byte to transmit)
 	SCL0
 	SDA1
 	SCL1
 i2c_start:
-; in: 	a0 (byte to transmit)
+; in: 	d0 (byte to transmit)
 	SDA0
 i2c_write:
-	com	a0			; invert a0
+	com	d0			; invert d0
 	I2C_BIT_OUT 7
 	I2C_BIT_OUT 6
 	I2C_BIT_OUT 5
@@ -73,7 +73,7 @@ i2c_write:
 	I2C_BIT_OUT 2
 	I2C_BIT_OUT 1
 	I2C_BIT_OUT 0
-	com	a0          		; restore a0
+	com	d0          		; restore d0
 i2c_ack_in:
 	SCL0
 	SDA1            		; release SDA
@@ -83,7 +83,7 @@ i2c_ack_in:
 	ret
 
 i2c_read:
-; out: 	a0 (byte read)
+; out: 	d0 (byte read)
 	I2C_BIT_IN 7
 	I2C_BIT_IN 6
 	I2C_BIT_IN 5

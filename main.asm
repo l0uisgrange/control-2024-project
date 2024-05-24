@@ -60,6 +60,7 @@ isr_return:
 .include "printf.asm"
 .include "sound.asm"
 .include "eeprom.asm"
+.include "i2cx.asm"
 
 .org 0x400
 
@@ -77,11 +78,11 @@ reset:
 	CLR4	b0, b1, b2, b3
 	CLR4	c0, c1, c2, c3
 	CLR4	d0, d1, d2, d3
-	rcall	eeprom_load
-	_CPI		d0, 0xff
+	rcall	score_load
+	_CPI	d0, 0xff
 	brne	show
 	_LDI	d0, 0x00
-	rcall	eeprom_store
+	rcall	score_store
 show:
 	PRINTF  LCD			; printing welcome message
 	.db	CR, "Welcome to", CR, LF, "Mastermind     ", FDEC, d
@@ -92,9 +93,9 @@ show:
 	sei
 reset_score:
 	sbic	PINB, 7
-	jmp		main
-	CLR		d0
-	rcall	eeprom_store
+	jmp	main
+	CLR	d0
+	rcall	score_store
 	PRINTF	LCD
 	.db CR, "Score has been", CR, LF, "reset."
 	.db 0
@@ -137,11 +138,11 @@ check:
 	breq	success
 fail:
 	CLR4	d0, d1, d2, d3
-	rcall	eeprom_load		; load score from EEPROM and decrease it
+	rcall	score_load		; load score from EEPROM and decrease it
 	dec	d0			; decrease score
 	sbrs	d0, 7			; if score <0 skip save in EEPROM
-	rcall	eeprom_store		; store new score in EEPROM
-	rcall	eeprom_load
+	rcall	score_store		; store new score in EEPROM
+	rcall	score_load
 	PRINTF	LCD			; display current score
 	.db CR, "Wrong !", LF, "Current score: ", FDEC, d
 	.db 0
@@ -152,9 +153,9 @@ fail:
 	rjmp	guess
 success:
 	CLR4	d0, d1, d2, d3
-	rcall	eeprom_load		; load score from EEPROM
+	rcall	score_load		; load score from EEPROM
 	inc	d0			; increase score
-	rcall	eeprom_store		; save score to EEPROM
+	rcall	score_store		; save score to EEPROM
 	PRINTF	LCD			; display current score
 	.db CR, "Correct !", LF, "Current score: ", FDEC, d
 	.db 0

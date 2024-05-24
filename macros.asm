@@ -35,6 +35,12 @@
 	rcall	LCD_home
 .endmacro
 
+; ——— register to i2c ———
+.macro	CAR
+	mov	a0, @1
+	rcall	@0
+.endmacro
+
 
 ; ==============
 ; 	pointers

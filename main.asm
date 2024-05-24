@@ -90,13 +90,14 @@ clear_score:
 	clr	d0			; >otherwise clear score in eeprom
 	rcall	eeprom_store
 	PRINTF	LCD
-	.db CR, "Score was reset"
+	.db CR, "Score has been", LF, CR, "reset."
 	.db 0
 	WAIT_MS	1000
 	LCD_CH
 
 ; ––– game configuration –––
 main:
+	rcall	LCD_blink_on
 	PRINTF	LCD
 	.db CR, "Char to guess :"
 	.db 0
@@ -104,6 +105,7 @@ main:
 	cpi	b0, 0x20		; compare b0 to space char AKA no key pressed (init state)
 	breq	main
 	LCD_CH
+	rcall	LCD_blink_off
 	PRINTF	LCD			; displaying char chosen by user1
 	.db CR, "Char to guess :", LF, FCHAR, b
 	.db 0

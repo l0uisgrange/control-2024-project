@@ -25,7 +25,7 @@
 	brne	@1
 	ldi	w, @2
 	ADDI	w, 1			; added 1 for ops with lookup table
-	_LDI	col, w	
+	mov	col, w	
 	rjmp	isr_return
 .endmacro
 

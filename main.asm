@@ -59,7 +59,6 @@ isr_return:
 .include "lcd.asm"
 .include "printf.asm"
 .include "sound.asm"
-.include "eeprom.asm"
 .include "i2cx.asm"
 
 .org 0x400

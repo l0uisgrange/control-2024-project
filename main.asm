@@ -66,6 +66,7 @@ isr_return:
 reset:	
 	LDSP	RAMEND			; load Stack Pointer (SP)
 	rcall	LCD_init		; initialize LCD
+	rcall	i2c_init		; initialize I2C
 	OUTI	DDRD, 0xf0		; bit0-3 pull-up and bits4-7 driven low
 	OUTI	PORTD, 0x0f		
 	OUTI	EIMSK, 0x0f		; enable INT0-INT3
@@ -183,6 +184,33 @@ play:					; play loaded music sheet
 end:
 	rcall	sound_off
 	ret	
+
+
+; ——— external eeprom subroutines ———
+score_store:
+	CA	i2c_start, EEPROM	; start I2C connection
+	CA	i2c_write, 0x00		; address MSB
+	CA	i2c_write, 0x00		; address LSB
+	CA	i2c_write, d0		; score to save
+	CA	i2c_write, 0x00
+	CA	i2c_write, 0x00
+	rcall	i2c_stop
+	WAIT_US 1000
+	ret
+
+score_load:
+	CA	i2c_start, EEPROM
+	CA	i2c_write, 0x00		; address MSB
+	CA	i2c_write, 0x00		; address LSB
+	CA	i2c_rep_start, EEPROM+1	; device address + read flag
+	rcall	i2c_read
+	rcall	i2c_ack
+	rcall	i2c_read
+	rcall	i2c_ack
+	rcall	i2c_read
+	rcall	i2c_no_ack
+	rcall	i2c_stop
+	ret
 
 ; ——— lookup tables ———
 lookup0:				; used to decode keypad button press

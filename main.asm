@@ -193,8 +193,6 @@ score_store:
 	CA	i2c_write, 0x00		; address MSB
 	CA	i2c_write, 0x00		; address LSB
 	CA	i2c_write, d0		; score to save
-	CA	i2c_write, 0x00
-	CA	i2c_write, 0x00
 	rcall	i2c_stop
 	WAIT_US 1000
 	ret
@@ -205,12 +203,9 @@ score_load:
 	CA	i2c_write, 0x00		; address LSB
 	CA	i2c_rep_start, EEPROM+1	; device address + read flag
 	rcall	i2c_read
-	rcall	i2c_ack
-	rcall	i2c_read
-	rcall	i2c_ack
-	rcall	i2c_read
 	rcall	i2c_no_ack
 	rcall	i2c_stop
+	mov	d0, a0
 	ret
 
 ; ——— lookup tables ———

@@ -1,7 +1,7 @@
-; file	i2cx.asm   target ATmega128L-4MHz-STK300
+; file i2cx.asm target ATmega128L-4MHz-STK300
 ; purpose extended I2C (400 k bit/s), software emulation
 
-; ——— definitions ===
+; ——— definitions ———
 .equ	SDA_port= PORTB
 .equ	SDA_pin	= SDA
 .equ	SCL_port= PORTB
@@ -11,7 +11,7 @@
 .equ	SCL_port= PORTD
 .equ	SCL_pin	= 0*/
 
-; === macros ===
+; ——— macros ———
 ; these macros control DDRx to simulate an open collector
 ; with external pull-up resistors
 
@@ -48,7 +48,7 @@
 	bld	a0,@0				; load a0(bit) from T
 	.endmacro
 
-; === routines ===
+; ——— routines ———
 i2c_init:
 	cbi	SDA_port,  SDA_pin	; PORTx=0 (for pull-down)
 	cbi	SCL_port,  SCL_pin	; PORTx=0 (for pull-down)
